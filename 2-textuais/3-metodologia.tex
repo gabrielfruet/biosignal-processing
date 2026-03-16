@@ -3,12 +3,15 @@
 
 \section{Descrição da Ferramenta MNE}\label{sec:exemplo-de-algoritmos-e-figuras}
 
-    O MNE-Python (frequentemente chamado apenas de MNE) é uma biblioteca de código aberto em Python projetada para a exploração, processamento e análise de dados neurofisiológicos humanos. Ele é o padrão na pesquisa em neurociência para lidar com sinais cerebrais.
+    O MNE-Python (cuja sigla representa \textit{Magnetoencephalography and Electroencephalography} em Python) é um pacote de código aberto em Python projetado para a exploração, visualização e análise de dados neurofisiológicos humanos. Tornou-se um padrão na pesquisa em neurociência para o processamento de sinais cerebrais devido à sua flexibilidade e abrangência.
 
-    O MNE suporta varios tipos de dados, como dados de EEG (Eletroencefalografia), MEG (Magnetoencefalografia), sEEG, ECoG e fNIRS. Além disso, oferece ferramentas
-    robustas para filtragem, detecção de eventos e remoção de artefatos via ICA ou ISSP.
+    O MNE-Python suporta diversos tipos de dados neurofisiológicos, incluindo EEG (\textit{Electroencephalography}), MEG (\textit{Magnetoencephalography}), sEEG (EEG intracraniano), ECoG (\textit{Electrocorticography}) e fNIRS (\textit{Functional Near-Infrared Spectroscopy}). A biblioteca oferece um ecossistema completo de ferramentas que cobrem todas as etapas do pipeline de análise, desde a leitura e importação de dados em diversos formatos até a etapa de pré-processamento, análise e visualização dos resultados.
 
-    O toolkit vem equipado com analise no domínio do tempo e domínio do tempo-frequência usando Fourier e Wavelet.
+    Entre as principais funcionalidades de pré-processamento, o MNE-Python oferece ferramentas robustas para filtragem digital, detecção de eventos e remoção de artefatos. A remoção de artefatos pode ser realizada por meio de ICA (\textit{Independent Component Analysis}) ou SSP (\textit{Signal Space Projection}), técnicas amplamente utilizadas para eliminar artefatos oculares, cardíacos e musculares dos sinais.
+
+    O toolkit possui capacidades de análise no domínio do tempo e no domínio tempo-frequência, utilizando transformadas como Fourier e wavelets de Morlet. Além disso, o MNE-Python implementa soluções para o problema inverso, permitindo a estimação de fontes neurais a partir das medições de sensores, utilizando métodos como \textit{beamforming}. A biblioteca também integra ferramentas de conectividade, estatística e aprendizado de máquina, tornando-a uma solução abrangente para pesquisa em neurociência.
+
+    A estrutura de dados central do MNE-Python é organizada em três classes principais: \textit{Raw} para dados contínuos, \textit{Epochs} para segmentos de interesse delimitados por eventos, e \textit{Evoked} para médias de épocas associadas a condições experimentais específicas.
 
     %\begin{algorithm}[h!]
     %	\SetSpacedAlgorithm
