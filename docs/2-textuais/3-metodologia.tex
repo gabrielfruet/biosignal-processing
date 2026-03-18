@@ -38,3 +38,84 @@
     principais: \textit{Raw} para dados contínuos, \textit{Epochs} para
     segmentos de interesse delimitados por eventos, e \textit{Evoked} para
     médias de épocas associadas a condições experimentais específicas.
+
+\section{Revisão da Literatura atual e Estado da Arte}\label{sec:revisao-literatura-estado-arte}
+
+Embora ferramentas consolidadas como o MNE-Python ofereçam um ecossistema
+robusto para o processamento clássico e estatístico de biossinais, a fronteira
+atual da pesquisa tem se voltado para a aplicação de abordagens de
+\textit{Deep Learning} e Modelos de Linguagem Grandes (LLMs).
+O estado da arte deixou de tratar os biossinais puramente como séries
+temporais tradicionais e passou a analisá-los com o ferramental de Processamento
+de Linguagem Natural (NLP), utilizando técnicas como o aprendizado
+autossupervisionado (SSL) e \textit{prompt-tuning} em arquiteturas de
+fundação. Essa mudança de paradigma tem impulsionado avanços
+significativos em quatro modalidades principais de biossinais: ECG, PPG,
+IMU e EEG.
+
+\subsection{Eletrocardiograma (ECG)}
+A análise de ECG tem explorado fortemente a multimodalidade, combinando
+sinais de séries temporais com informações textuais de relatórios
+clínicos. O uso de LLMs, como o GPT-4, em tarefas de
+\textit{Visual Question Answering} (VQA) para imagens de ECG de 12 derivações
+tem demonstrado precisão diagnóstica que se aproxima ou supera a de médicos
+especialistas na avaliação de casos de menor complexidade. Modelos 
+omo o CKEPE utilizam LLMs para consultar bases de conhecimento clínico externas
+e gerar \textit{prompts} estruturados, aprimorando substancialmente a
+classificação \textit{zero-shot} e mitigando alucinações da rede.
+Adicionalmente, arquiteturas como o METS integram codificadores de ECG (ex.,
+ResNet-18) e de texto (ex., ClinicalBert) em um espaço dimensional compartilhado
+para otimizar o diagnóstico a partir de dados não rotulados.
+
+\subsection{Fotopletismograma (PPG)}
+Os sinais de PPG, amplamente utilizados em dispositivos vestíveis para
+estimativa de frequência cardíaca e detecção de estresse, apresentam o
+desafio da alta suscetibilidade a ruídos ambientais e variações de
+calibração. O estado da arte tem adaptado arquiteturas de fundação,
+preservando os componentes centrais do modelo GPT original, mas ajustando as
+camadas de \textit{embedding} para a análise de sinais contínuos. O
+modelo GPT-PPG, por exemplo, foi pré-treinado com mais de 200 milhões de
+amostras para atingir desempenho superior na estimativa da frequência
+cardíaca. Outro avanço pertinente é o modelo ALPHA, que aplica LLMs refinados
+para extrair dados fisiológicos diretamente a partir da quantificação de ciclos em imagens
+de PPG.
+
+\subsection{Sensores Inerciais (IMU)}
+Para os sinais de movimento capturados por acelerômetros e giroscópios, o foco recai sobre o
+Reconhecimento de Ações Humanas (HAR). Modelos como o LLMTrack e o HARGPT
+demonstraram que LLMs podem compreender dados brutos de IMU e realizar tarefas de
+classificação de trajetória e ação de forma \textit{zero-shot}, utilizando apenas
+\textit{prompts} adequados e superando métodos de aprendizado de máquina tradicionais,
+como redes LSTM e CNNs. Além disso, sistemas baseados em LLMs estão sendo empregados
+para gerar descrições textuais que são posteriormente convertidas em sequências de movimentos
+3D (IMU virtual), visando o aumento sintético da base de dados de treinamento.
+
+\subsection{Eletroencefalograma (EEG) e o Modelo LUNA}
+O processamento de EEG apresenta desafios inerentes devido à natureza complexa, não
+estacionária e com alta variabilidade interindividual das ondas cerebrais. Uma das
+principais linhas de pesquisa atuais envolve a decodificação direta de pensamento para texto
+(\textit{EEG-to-Text}), na qual modelos pré-treinados, como o BART, são utilizados para mapear
+\textit{embeddings} neurais em linguagem natural. 
+
+Apesar das inovações, o maior gargalo computacional na análise de EEG por meio de
+\textit{Transformers} continua sendo a heterogeneidade topológica, que compreende a variação no número e
+na disposição dos eletrodos entre diferentes pacientes, além das bases de dados e a complexidade
+de atenção quadrática $\mathcal{O}((S\cdot C)^2)$ imposta pelo longo sequenciamento
+espaço-temporal. Para solucionar essa limitação, destaca-se o modelo
+LUNA (\textit{Latent Unified Network Architecture}), o qual atua como um modelo
+fundacional autossupervisionado que utiliza um mecanismo de codificação invariante à
+topologia.
+
+Em vez de processar cada eletrodo individualmente em sua malha original, o LUNA
+utiliza \textit{queries} aprendidas e atenção cruzada (\textit{cross-attention}) para
+projetar conjuntos arbitrários de canais de EEG em um espaço latente de tamanho fixo.
+Essa inovação arquitetural desacopla o custo computacional do número de eletrodos físicos
+utilizados na captação. Como resultado, a complexidade computacional para a
+atenção temporal passa a escalar de forma linear, e não quadrática, o que confere ao
+modelo uma redução drástica no uso de memória de GPU (até 10 vezes menor) e nas operações
+de ponto flutuante (redução de cerca de 300 vezes no FLOPs). Pré-treinado com mais
+de 21.000 horas de EEG bruto sob objetivos de reconstrução mascarada, o LUNA atinge resultados
+de ponta em tarefas de classificação, como a detecção de anomalias e rejeição de artefatos,
+mantendo alta eficácia independentemente da configuração topológica adotada na touca do
+paciente.
+
