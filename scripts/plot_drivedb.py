@@ -3,6 +3,7 @@
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy import signal
 
 from load_drivedb import DATA_DIR, load_record, list_records
 
@@ -98,6 +99,46 @@ def plot_signals(
         plt.show()
 
 
+def plot_signals_saturation_histogram(
+    record_name: str,
+    data_dir: str | None = None,
+    signals: list[str] | None = None,
+) -> None:
+    """Plot histogram of signal values to check for saturation.
+
+    Args:
+        record_name: Name of the record (e.g., 'drive01')
+        data_dir: Optional path to data directory
+        signal_name: Name of the signal to analyze (default: 'ECG')
+    """
+    record = load_record(record_name, data_dir)
+
+    # Find signal index
+    if signals is None:
+        sig_indices = list(range(len(record.sig_name)))
+    else:
+        sig_indices = [i for i, name in enumerate(record.sig_name) if name in signals]
+        if not sig_indices:
+            available = ", ".join(record.sig_name)
+            raise ValueError(
+                f"None of the requested signals found. Available: {available}"
+            )
+
+    fig, ax = plt.subplots(len(sig_indices), figsize=(8, 4))
+
+    for i, sig_idx in enumerate(sig_indices):
+        signal_data = record.p_signal[:, sig_idx]
+        sig_name = record.sig_name[sig_idx]
+
+        ax[i].hist(signal_data, bins=50, color="steelblue", alpha=0.7)
+        ax[i].set_title(f"{sig_name} Value Distribution", fontsize=10)
+        ax[i].set_xlabel("Signal Value", fontsize=9)
+        ax[i].set_ylabel("Count", fontsize=9)
+        ax[i].grid(True, alpha=0.3)
+
+    plt.show()
+
+
 def plot_signals_summary(records: list[str], data_dir: str | None = None) -> None:
     """Plot a summary view of multiple records (first 10 seconds each).
 
@@ -132,6 +173,115 @@ def plot_signals_summary(records: list[str], data_dir: str | None = None) -> Non
     plt.show()
 
 
+def plot_signals_psd(
+    record_name: str,
+    data_dir: str | None = None,
+    signals: list[str] | None = None,
+    duration_sec: float | None = None,
+    nperseg: int = 2048,
+    show: bool = True,
+    save_path: str | None = None,
+) -> None:
+    """Plot Power Spectral Density (PSD) of signals from a DriveDB record.
+
+    Uses Welch's method for PSD estimation.
+
+    Args:
+        record_name: Name of the record (e.g., 'drive01')
+        data_dir: Optional path to data directory
+        signals: Optional list of signal names to plot (default: all)
+        duration_sec: Optional duration in seconds to analyze (default: all)
+        nperseg: Length of each segment for Welch's method (default: 2048)
+        show: Whether to display the plot
+        save_path: Optional path to save the figure
+    """
+    # Load the record
+    record = load_record(record_name, data_dir)
+
+    # Get signal indices to plot
+    if signals is None:
+        sig_indices = list(range(len(record.sig_name)))
+    else:
+        sig_indices = [i for i, name in enumerate(record.sig_name) if name in signals]
+        if not sig_indices:
+            available = ", ".join(record.sig_name)
+            raise ValueError(
+                f"None of the requested signals found. Available: {available}"
+            )
+
+    # Calculate samples
+    n_samples = record.p_signal.shape[0]
+    fs = record.fs
+
+    # Limit to duration if specified
+    if duration_sec is not None:
+        max_samples = int(duration_sec * fs)
+        n_samples = min(n_samples, max_samples)
+
+    # Create subplots
+    n_signals = len(sig_indices)
+    fig, axes = plt.subplots(n_signals, 1, figsize=(14, 3 * n_signals), sharex=True)
+
+    if n_signals == 1:
+        axes = [axes]
+
+    # Compute and plot PSD for each signal
+    for ax_idx, sig_idx in enumerate(sig_indices):
+        ax = axes[ax_idx]
+        signal_data = record.p_signal[:n_samples, sig_idx]
+        sig_name = record.sig_name[sig_idx]
+        sig_unit = record.units[sig_idx]
+
+        # Compute PSD using Welch's method
+        # nperseg adjusted to not exceed data length
+        nperseg_actual = min(nperseg, n_samples)
+        freqs, psd = signal.welch(
+            signal_data, fs=fs, nperseg=nperseg_actual, noverlap=nperseg_actual // 2
+        )
+
+        # Plot PSD
+        ax.semilogy(freqs, psd, linewidth=0.8, color="steelblue")
+        ax.set_ylabel(f"{sig_name}\n(psd: {sig_unit}²/Hz)", fontsize=10)
+        ax.grid(True, alpha=0.3)
+
+        # Find dominant frequency
+        if len(psd) > 0:
+            dom_freq_idx = np.argmax(psd)
+            dom_freq = freqs[dom_freq_idx]
+            ax.axvline(dom_freq, color="red", linestyle="--", linewidth=0.8, alpha=0.7)
+            ax.text(
+                0.02,
+                0.95,
+                f"Dom. freq: {dom_freq:.2f} Hz",
+                transform=ax.transAxes,
+                fontsize=9,
+                verticalalignment="top",
+                bbox=dict(boxstyle="round", facecolor="white", alpha=0.8),
+            )
+
+        # Mark frequency bands for ECG-like signals
+        if "ECG" in sig_name.upper() or "ECG" in sig_name:
+            # Mark typical ECG frequency range (0.5-40 Hz)
+            ax.axvspan(0.5, 40, alpha=0.1, color="green", label="ECG band")
+            ax.legend(loc="upper right", fontsize=8)
+
+    axes[-1].set_xlabel("Frequency (Hz)", fontsize=12)
+    fig.suptitle(
+        f"DriveDB - {record_name} - Power Spectral Density\n"
+        f"Sampling: {fs} Hz | Duration: {n_samples / fs:.1f} s | nperseg: {nperseg_actual}",
+        fontsize=14,
+    )
+
+    plt.tight_layout()
+
+    if save_path:
+        fig.savefig(save_path, dpi=150, bbox_inches="tight")
+        print(f"Figure saved to: {save_path}")
+
+    if show:
+        plt.show()
+
+
 def main():
     """Main entry point with CLI."""
     parser = argparse.ArgumentParser(description="Plot DriveDB biosignals")
@@ -152,6 +302,17 @@ def main():
     parser.add_argument(
         "--summary", action="store_true", help="Show summary of all records"
     )
+    parser.add_argument(
+        "--psd",
+        action="store_true",
+        help="Plot Power Spectral Density instead of time domain",
+    )
+    parser.add_argument(
+        "--nperseg",
+        type=int,
+        default=2048,
+        help="Segment length for PSD (default: 2048)",
+    )
 
     args = parser.parse_args()
 
@@ -159,6 +320,16 @@ def main():
         records = list_records(args.data_dir)
         print(f"Showing summary of {len(records)} records...")
         plot_signals_summary(records, args.data_dir)
+    elif args.psd:
+        plot_signals_psd(
+            record_name=args.record,
+            data_dir=args.data_dir,
+            signals=args.signals,
+            duration_sec=args.duration,
+            nperseg=args.nperseg,
+            show=not args.no_show,
+            save_path=args.save,
+        )
     else:
         plot_signals(
             record_name=args.record,
@@ -168,6 +339,8 @@ def main():
             show=not args.no_show,
             save_path=args.save,
         )
+
+    plot_signals_saturation_histogram(args.record, args.data_dir)
 
 
 if __name__ == "__main__":
