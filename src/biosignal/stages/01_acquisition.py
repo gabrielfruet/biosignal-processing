@@ -84,16 +84,20 @@ def identify_problems(raw: Any) -> dict[str, list[str]]:
         if np.std(ch_data) < 1e-6:
             problems["flat_channels"].append(ch_name)
 
-        # Clipping: >5% samples at min or max
+        # Clipping: >1% samples at min or max OR single sample at extremes
         min_val, max_val = ch_data.min(), ch_data.max()
         range_val = max_val - min_val
         if range_val > 0:
-            clip_threshold_low = min_val + 0.001 * range_val
-            clip_threshold_high = max_val - 0.001 * range_val
-            clipped = np.sum(
+            clip_threshold_low = min_val + 0.0001 * range_val
+            clip_threshold_high = max_val - 0.0001 * range_val
+            clipped_indices = np.where(
                 (ch_data <= clip_threshold_low) | (ch_data >= clip_threshold_high)
-            )
-            if clipped / len(ch_data) > 0.05:
+            )[0]
+            clipped_ratio = len(clipped_indices) / len(ch_data)
+            
+            # Identify clipping if >1% of samples are clipped OR 
+            # if we have any samples at the very extremes of a large range
+            if clipped_ratio > 0.01 or (clipped_ratio > 0 and range_val > 1000):
                 problems["clipping_channels"].append(ch_name)
 
         # Dead channel: all values identical

@@ -54,13 +54,13 @@ A análise inicial de integridade identificou ocorrências de falhas em todos os
         \textbf{Categoria de Falha} & \textbf{Total de Ocorrências} \\
         \midrule
         Canais planos (ausência de sinal) & 32 \\
-        Clipping (saturação de amplitude) & 6 \\
+        Clipping (saturação de amplitude) & 156 \\
         Canais com alto nível de ruído & 16 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-O fenômeno de clipping foi detectado em seis canais de EEG, incidindo predominantemente nos canais occipitais e parietais (PO7, PO8 e PO3). Esta falha manifesta-se pela saturação dos picos de tensão nos limites superiores do conversor analógico-digital (A/D), provocando a perda irreversível de informação nos pontos de máxima amplitude do sinal.
+O fenômeno de clipping foi detectado em 156 canais, incidindo em todas as modalidades de biossinais. Esta falha manifesta-se pela saturação dos picos de tensão nos limites superiores do conversor analógico-digital (A/D), provocando a perda irreversível de informação nos pontos de máxima amplitude do sinal. Observou-se que mesmo sinais aparentemente íntegros, como ECG e EMG, apresentam picos impulsivos de saturação no início dos registros.
 
 Identificou-se ainda 32 ocorrências de canais classificados como planos, indicando registros com variância estatisticamente nula. Tal comportamento sugere a desconexão física de eletrodos ou o mau funcionamento de transdutores ópticos, como observado na modalidade de fNIRS. Adicionalmente, 16 canais de EEG foram rotulados como ruidosos devido à presença de artefatos de interferência externa ou biológica que degradam a qualidade espectral do registro.
 
@@ -84,4 +84,4 @@ A visualização dos sinais brutos para o sujeito 000, abrangendo as quatro moda
 
 \section{Discussão dos Achados}
 
-A análise preliminar indica que os sinais de ECG e EMG possuem qualidade superior, sem evidências de saturação ou degradação excessiva por ruído. Em contraste, os canais de EEG PO7, PO8 e PO3 exibem falhas recorrentes de clipping que exigirão tratamento específico nas fases posteriores de processamento. A modalidade de fNIRS apresenta registros predominantemente planos, indicando falhas graves no acoplamento óptico ou na captura dos parâmetros de oxiemoglobina. Tais achados fundamentam a necessidade das etapas sequenciais de avaliação de qualidade (SQI) e limpeza de dados (Data Cleaning), permitindo a exclusão ou correção de segmentos comprometidos antes da extração de atributos e modelagem estatística.
+A análise preliminar indica que, embora os sinais de ECG e EMG possuam morfologia clara na maior parte do tempo, eles não estão isentos de saturação. A detecção refinada revelou artefatos de clipping em 156 canais no total, incluindo as modalidades de ECG e EMG, o que exigirá tratamento específico nas fases posteriores de processamento. A modalidade de fNIRS apresenta registros predominantemente planos, indicando falhas graves no acoplamento óptico ou na captura dos parâmetros de oxiemoglobina. Tais achados fundamentam a necessidade das etapas sequenciais de avaliação de qualidade (SQI) e limpeza de dados (Data Cleaning), permitindo a exclusão ou correção de segmentos comprometidos antes da extração de atributos e modelagem estatística.
