@@ -94,8 +94,8 @@ def identify_problems(raw: Any) -> dict[str, list[str]]:
                 (ch_data <= clip_threshold_low) | (ch_data >= clip_threshold_high)
             )[0]
             clipped_ratio = len(clipped_indices) / len(ch_data)
-            
-            # Identify clipping if >1% of samples are clipped OR 
+
+            # Identify clipping if >1% of samples are clipped OR
             # if we have any samples at the very extremes of a large range
             if clipped_ratio > 0.01 or (clipped_ratio > 0 and range_val > 1000):
                 problems["clipping_channels"].append(ch_name)
