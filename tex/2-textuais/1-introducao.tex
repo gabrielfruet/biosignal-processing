@@ -1,3 +1,18 @@
 \chapter{Introdução}
 \label{cap:introducao}
 
+Biossinais são manifestações físicas, químicas ou elétricas decorrentes de processos fisiológicos do corpo humano. Tais sinais carregam informações fundamentais sobre o estado funcional de órgãos e sistemas, possuindo aplicações consolidadas em diagnóstico clínico, monitoramento de pacientes, interfaces cérebro-máquina e reconhecimento de estados emocionais.
+
+Este trabalho descreve o desenvolvimento de um pipeline para o processamento de biossinais multimodais, estruturado desde a aquisição dos dados brutos até a consolidação de um conjunto de dados validado para técnicas de reconhecimento de padrões. O fluxo de processamento é dividido em dez etapas sequenciais: aquisição, avaliação de qualidade via índices de qualidade do sinal (SQI), análise estatística exploratória, limpeza e correção de artefatos, segmentação temporal, extração de atributos, engenharia de atributos, redução de dimensionalidade, seleção de variáveis e, por fim, validação estatística do conjunto de dados resultante.
+
+Para o desenvolvimento do pipeline, utilizou-se o \textit{IEEE Multimodal Emotion Recognition Dataset}, que contém registros de 16 sujeitos experimentais. O conjunto de dados abrange quatro modalidades distintas: eletroencefalografia (EEG) com 8 canais, eletrocardiografia (ECG), eletromiografia (EMG) e espectroscopia de infravermelho próximo funcional (fNIRS). Cada registro possui aproximadamente 60 segundos de duração por modalidade.
+
+Este relatório detalha os resultados obtidos no primeiro estágio do pipeline, concentrando-se nos procedimentos de aquisição, carga de dados e validação inicial da integridade dos biossinais.
+
+\section{Objetivos}
+
+O objetivo central deste trabalho é a implementação de um fluxo de processamento reprodutível para biossinais multimodais, visando a geração de uma base de dados robusta para modelos de aprendizado de máquina. Especificamente, busca-se validar a integridade física dos sinais, verificar a conformidade com o teorema de amostragem de Nyquist para todas as modalidades, identificar falhas de aquisição e estabelecer o rigor metodológico necessário para as etapas subsequentes do projeto.
+
+\section{Organização do Trabalho}
+
+O presente documento está estruturado em cinco capítulos. O Capítulo \ref{cap:fundamentacao-teorica} aborda os conceitos teóricos sobre os biossinais analisados e as técnicas de processamento. O Capítulo \ref{chap:metodologia} descreve os métodos aplicados, incluindo a caracterização do dataset e do ambiente computacional. O Capítulo \ref{chap:resultados} apresenta a análise dos dados adquiridos e as validações realizadas. Por fim, o Capítulo \ref{chap:conclusoes-e-trabalhos-futuros} expõe as conclusões deste estágio e as propostas para o desenvolvimento das próximas fases do pipeline.

@@ -1,3 +1,24 @@
-\chapter{Título do segundo capítulo}
+\chapter{Fundamentação Teórica}
 \label{cap:fundamentacao-teorica}
 
+\section{Biossinais}
+
+Biossinais são representações temporais de fenômenos fisiológicos que, por meio de transdutores adequados, são convertidos em sinais elétricos. Cada modalidade biológica apresenta propriedades distintivas quanto à frequência, amplitude e mecanismos de geração.
+
+O eletroencefalograma, referido como EEG, registra a atividade elétrica do córtex cerebral por meio de eletrodos extracranianos. Os sinais EEG são segmentados em bandas de frequência: delta (0,5--4 Hz), theta (4--8 Hz), alpha (8--13 Hz), beta (13--30 Hz) e gamma (>30 Hz). A amplitude desses sinais oscila tipicamente entre 5 e 100 $\mu$V, dependendo do estado cortical.
+
+O eletrocardiograma, ou ECG, monitora a despolarização e repolarização cardíaca, manifestando-se como ondas características designadas P, Q, R, S e T. As frequências de interesse para análise cardíaca situam-se primordialmente entre 0,5 e 40 Hz, com picos de amplitude em torno de 1 mV.
+
+O eletromiograma de superfície, abreviado como EMG, capta o somatório dos potenciais de ação das unidades motoras durante a contração muscular esquelética. Sua banda de frequência predominante estende-se de 20 a 250 Hz, com amplitudes variando de 0,1 a 5 mV.
+
+A espectroscopia de infravermelho próximo funcional, designada fNIRS, é uma técnica óptica que utiliza comprimentos de onda entre 650 e 950 nm para quantificar flutuações nas concentrações de oxiemoglobina e desoxiemoglobina. Tais variações hemodinâmicas, processadas pela lei de Beer-Lambert modificada, ocorrem em frequências inferiores a 0,5 Hz.
+
+\section{Teorema de Amostragem de Nyquist}
+
+O teorema de Nyquist-Shannon postula que um sinal contínuo com banda limitada pode ser perfeitamente reconstruído a partir de suas amostras discretas caso a taxa de amostragem seja superior ao dobro da frequência máxima contida no sinal original. Matematicamente, $f_s > 2 \cdot f_{max}$, onde $f_s$ representa a frequência de amostragem e $f_{max}$ a frequência de corte do sinal. O cumprimento desse critério é essencial para mitigar o fenômeno de aliasing e preservar a fidelidade espectral da aquisição.
+
+\section{Ferramentas de Processamento}
+
+A biblioteca MNE-Python é uma ferramenta de código aberto para a análise e visualização de dados neurofisiológicos multimodais. O toolkit oferece suporte para EEG, MEG, sEEG, ECoG e fNIRS, organizando os dados em estruturas de classe \textit{Raw} para sinais contínuos, \textit{Epochs} para janelas baseadas em eventos e \textit{Evoked} para processamento estatístico de médias.
+
+Os índices de qualidade do sinal, genericamente referidos como SQI, são ferramentas diagnósticas que avaliam a integridade dos biossinais por meio de parâmetros estatísticos e espectrais. Métricas recorrentes incluem a razão sinal-ruído, curtose, assimetria e entropia espectral, permitindo a exclusão automatizada de registros corrompidos por artefatos instrumentais ou fisiológicos.
