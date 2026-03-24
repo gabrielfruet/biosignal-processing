@@ -1,1 +1,6 @@
 - use uv 
+- prefer simple over clever code
+- dont repeat yourself. 
+- dont maintain dead code
+- prefer composable functions
+- KISS principle over all
