@@ -1,121 +1,38 @@
 \chapter{Metodologia}
 \label{chap:metodologia}
 
-\section{Descrição da Ferramenta MNE}\label{sec:exemplo-de-algoritmos-e-figuras}
+\section{Caracterização do Dataset}
 
-    O MNE-Python (cuja sigla representa \textit{Magnetoencephalography and
-    Electroencephalography} em Python) é um pacote de código aberto em Python
-    projetado para a exploração, visualização e análise de dados
-    neurofisiológicos humanos. Tornou-se um padrão na pesquisa em neurociência
-    para o processamento de sinais cerebrais devido à sua flexibilidade e
-    abrangência.
+Utilizou-se o \textit{IEEE Multimodal Emotion Recognition Dataset}, contendo registros de 16 sujeitos experimentais abrangendo quatro biossinais principais: EEG, ECG, EMG e fNIRS. Os registros de EEG foram adquiridos pelo sistema Emotiv EPOC+, com 8 canais posicionados em AF7, AF8, F3, F4, PO7, PO8, PO3 e PO4, operando a uma frequência de amostragem de 512 Hz. As modalidades de ECG e EMG foram registradas com canais únicos a 250 Hz. O sistema de fNIRS registrou as concentrações de oxiemoglobina e desoxiemoglobina em dois canais a 16 Hz.
 
-    O MNE-Python suporta diversos tipos de dados neurofisiológicos, incluindo
-    EEG (\textit{Electroencephalography}), MEG
-    (\textit{Magnetoencephalography}), sEEG (EEG intracraniano), ECoG
-    (\textit{Electrocorticography}) e fNIRS (\textit{Functional Near-Infrared
-    Spectroscopy}). A biblioteca oferece um ecossistema completo de ferramentas
-    que cobrem todas as etapas da pipeline de análise, desde a leitura e
-    importação de dados em diversos formatos até a etapa de pré-processamento,
-    análise e visualização dos resultados.
+\section{Protocolo Experimental}
 
-    Entre as principais funcionalidades de pré-processamento, o MNE-Python
-    oferece ferramentas robustas para filtragem digital, detecção de eventos e
-    remoção de artefatos. A remoção de artefatos pode ser realizada por meio de
-    ICA (\textit{Independent Component Analysis}) ou SSP (\textit{Signal Space
-    Projection}), técnicas amplamente utilizadas para eliminar artefatos
-    oculares, cardíacos e musculares dos sinais.
+O protocolo de aquisição está subdividido em duas etapas principais. A etapa inicial compreende uma linha de base com duração de 30 segundos, durante a qual o participante permanece em estado de repouso para o estabelecimento dos parâmetros fisiológicos basais. A segunda etapa consiste em um estímulo emocional controlado com duração de 30 segundos, totalizando um período de registro aproximado de 60 segundos por participante.
 
-    O toolkit possui capacidades de análise no domínio do tempo e no domínio
-    tempo-frequência, utilizando transformadas como Fourier e wavelets de
-    Morlet. Além disso, o MNE-Python implementa soluções para o problema
-    inverso, permitindo a estimação de fontes neurais a partir das medições de
-    sensores, utilizando métodos como \textit{beamforming}. A biblioteca também
-    integra ferramentas de conectividade, estatística e aprendizado de máquina,
-    tornando-a uma solução abrangente para pesquisa em neurociência.
+\section{Validação do Teorema de Nyquist}
 
-    A estrutura de dados central do MNE-Python é organizada em três classes
-    principais: \textit{Raw} para dados contínuos, \textit{Epochs} para
-    segmentos de interesse delimitados por eventos, e \textit{Evoked} para
-    médias de épocas associadas a condições experimentais específicas.
+As frequências de amostragem configuradas foram validadas conforme o teorema de amostragem de Nyquist. Para o sinal de EEG, com frequência máxima de 50 Hz e amostragem de 512 Hz, obteve-se uma razão de 5,12. No sinal de ECG, com frequência máxima de 40 Hz amostrado a 250 Hz, a razão calculada foi de 3,13. No EMG, considerando frequência de corte de 100 Hz e amostragem de 250 Hz, a razão foi de 2,50. Por fim, para o fNIRS, com frequência máxima de 2 Hz e amostragem de 16 Hz, a razão obtida foi de 4,00. Todos os parâmetros atendem plenamente ao critério de Nyquist, conforme detalhado na Tabela \ref{tab:nyquist_validacao}.
 
-\section{Revisão da Literatura atual e Estado da Arte}\label{sec:revisao-literatura-estado-arte}
+\begin{table}[htbp]
+    \centering
+    \caption{Validação das taxas de amostragem conforme o teorema de Nyquist}
+    \label{tab:nyquist_validacao}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Modalidade} & $f_s$ (Hz) & $f_{max}$ (Hz) & $f_s / 2f_{max}$ & \textbf{Conforme} \\
+        \midrule
+        EEG & 512 & 50 & 5,12 & Sim \\
+        ECG & 250 & 40 & 3,13 & Sim \\
+        EMG & 250 & 100 & 2,50 & Sim \\
+        fNIRS & 16 & 2 & 4,00 & Sim \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
-Embora ferramentas consolidadas como o MNE-Python ofereçam um ecossistema
-robusto para o processamento clássico e estatístico de biossinais, a fronteira
-atual da pesquisa tem se voltado para a aplicação de abordagens de
-\textit{Deep Learning} e Modelos de Linguagem Grandes (LLMs).
-O estado da arte deixou de tratar os biossinais puramente como séries
-temporais tradicionais e passou a analisá-los com o ferramental de Processamento
-de Linguagem Natural (NLP), utilizando técnicas como o aprendizado
-autossupervisionado (SSL) e \textit{prompt-tuning} em arquiteturas de
-fundação. Essa mudança de paradigma tem impulsionado avanços
-significativos em quatro modalidades principais de biossinais: ECG, PPG,
-IMU e EEG.
+\section{Ambiente de Desenvolvimento}
 
-\subsection{Eletrocardiograma (ECG)}
-A análise de ECG tem explorado fortemente a multimodalidade, combinando
-sinais de séries temporais com informações textuais de relatórios
-clínicos. O uso de LLMs, como o GPT-4, em tarefas de
-\textit{Visual Question Answering} (VQA) para imagens de ECG de 12 derivações
-tem demonstrado precisão diagnóstica que se aproxima ou supera a de médicos
-especialistas na avaliação de casos de menor complexidade. Modelos 
-omo o CKEPE utilizam LLMs para consultar bases de conhecimento clínico externas
-e gerar \textit{prompts} estruturados, aprimorando substancialmente a
-classificação \textit{zero-shot} e mitigando alucinações da rede.
-Adicionalmente, arquiteturas como o METS integram codificadores de ECG (ex.,
-ResNet-18) e de texto (ex., ClinicalBert) em um espaço dimensional compartilhado
-para otimizar o diagnóstico a partir de dados não rotulados.
+O fluxo de processamento foi desenvolvido em linguagem Python, versão 3.13, integrando a biblioteca MNE-Python para o pré-processamento de biossinais. As bibliotecas NumPy e Pandas foram empregadas para manipulação de tensores e matrizes de dados, enquanto Matplotlib e SciPy foram utilizadas para visualização e processamento digital de sinais. O gerenciamento de dependências foi executado por meio da ferramenta uv e do arquivo de configuração pyproject.toml, assegurando a reprodutibilidade do ambiente computacional.
 
-\subsection{Fotopletismograma (PPG)}
-Os sinais de PPG, amplamente utilizados em dispositivos vestíveis para
-estimativa de frequência cardíaca e detecção de estresse, apresentam o
-desafio da alta suscetibilidade a ruídos ambientais e variações de
-calibração. O estado da arte tem adaptado arquiteturas de fundação,
-preservando os componentes centrais do modelo GPT original, mas ajustando as
-camadas de \textit{embedding} para a análise de sinais contínuos. O
-modelo GPT-PPG, por exemplo, foi pré-treinado com mais de 200 milhões de
-amostras para atingir desempenho superior na estimativa da frequência
-cardíaca. Outro avanço pertinente é o modelo ALPHA, que aplica LLMs refinados
-para extrair dados fisiológicos diretamente a partir da quantificação de ciclos em imagens
-de PPG.
+\section{Estrutura do Pipeline de Processamento}
 
-\subsection{Sensores Inerciais (IMU)}
-Para os sinais de movimento capturados por acelerômetros e giroscópios, o foco recai sobre o
-Reconhecimento de Ações Humanas (HAR). Modelos como o LLMTrack e o HARGPT
-demonstraram que LLMs podem compreender dados brutos de IMU e realizar tarefas de
-classificação de trajetória e ação de forma \textit{zero-shot}, utilizando apenas
-\textit{prompts} adequados e superando métodos de aprendizado de máquina tradicionais,
-como redes LSTM e CNNs. Além disso, sistemas baseados em LLMs estão sendo empregados
-para gerar descrições textuais que são posteriormente convertidas em sequências de movimentos
-3D (IMU virtual), visando o aumento sintético da base de dados de treinamento.
-
-\subsection{Eletroencefalograma (EEG) e o Modelo LUNA}
-O processamento de EEG apresenta desafios inerentes devido à natureza complexa, não
-estacionária e com alta variabilidade interindividual das ondas cerebrais. Uma das
-principais linhas de pesquisa atuais envolve a decodificação direta de pensamento para texto
-(\textit{EEG-to-Text}), na qual modelos pré-treinados, como o BART, são utilizados para mapear
-\textit{embeddings} neurais em linguagem natural. 
-
-Apesar das inovações, o maior gargalo computacional na análise de EEG por meio de
-\textit{Transformers} continua sendo a heterogeneidade topológica, que compreende a variação no número e
-na disposição dos eletrodos entre diferentes pacientes, além das bases de dados e a complexidade
-de atenção quadrática $\mathcal{O}((S\cdot C)^2)$ imposta pelo longo sequenciamento
-espaço-temporal. Para solucionar essa limitação, destaca-se o modelo
-LUNA (\textit{Latent Unified Network Architecture}), o qual atua como um modelo
-fundacional autossupervisionado que utiliza um mecanismo de codificação invariante à
-topologia.
-
-Em vez de processar cada eletrodo individualmente em sua malha original, o LUNA
-utiliza \textit{queries} aprendidas e atenção cruzada (\textit{cross-attention}) para
-projetar conjuntos arbitrários de canais de EEG em um espaço latente de tamanho fixo.
-Essa inovação arquitetural desacopla o custo computacional do número de eletrodos físicos
-utilizados na captação. Como resultado, a complexidade computacional para a
-atenção temporal passa a escalar de forma linear, e não quadrática, o que confere ao
-modelo uma redução drástica no uso de memória de GPU (até 10 vezes menor) e nas operações
-de ponto flutuante (redução de cerca de 300 vezes no FLOPs). Pré-treinado com mais
-de 21.000 horas de EEG bruto sob objetivos de reconstrução mascarada, o LUNA atinge resultados
-de ponta em tarefas de classificação, como a detecção de anomalias e rejeição de artefatos,
-mantendo alta eficácia independentemente da configuração topológica adotada na touca do
-paciente.
-
+O pipeline projetado compreende dez estágios sequenciais. O estágio inicial corresponde à aquisição e validação de dados brutos. O segundo estágio contempla o cálculo de índices de qualidade (SQI) para a rejeição de segmentos. O terceiro estágio executa análises estatísticas e testes de hipótese. O quarto estágio aplica técnicas de filtragem e correção de artefatos. O quinto estágio realiza a segmentação temporal dos sinais em janelas. O sexto estágio executa a extração de atributos nos domínios do tempo e da frequência. O sétimo estágio realiza a engenharia de novos atributos. O oitavo estágio aplica redução de dimensionalidade por componentes principais. O nono estágio executa a seleção de variáveis informativas. O décimo estágio valida estatisticamente o conjunto final. Este relatório concentra-se na execução do primeiro estágio do projeto.

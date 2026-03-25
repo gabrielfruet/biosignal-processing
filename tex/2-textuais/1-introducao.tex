@@ -1,32 +1,18 @@
 \chapter{Introdução}
 \label{cap:introducao}
 
-%Para começar a usar este \textit{template}, na plataforma \textit{ShareLatex}, vá nas opções (três barras vermelhas horizontais) no canto esquerdo superior da tela e clique em "Copiar Projeto" e dê um novo nome para o projeto. 
+Biossinais são manifestações físicas, químicas ou elétricas decorrentes de processos fisiológicos do corpo humano. Tais sinais carregam informações fundamentais sobre o estado funcional de órgãos e sistemas, possuindo aplicações consolidadas em diagnóstico clínico, monitoramento de pacientes, interfaces cérebro-máquina e reconhecimento de estados emocionais.
 
-Para começar a utilizar este \textit{template}, siga o tutorial clicando no seguinte \textit{link}:
-\url{https://biblioteca.ufc.br/wp-content/uploads/2015/09/tutorial-sharelatex.pdf}
+Este trabalho descreve o desenvolvimento de um pipeline para o processamento de biossinais multimodais, estruturado desde a aquisição dos dados brutos até a consolidação de um conjunto de dados validado para técnicas de reconhecimento de padrões. O fluxo de processamento é dividido em dez etapas sequenciais: aquisição, avaliação de qualidade via índices de qualidade do sinal (SQI), análise estatística exploratória, limpeza e correção de artefatos, segmentação temporal, extração de atributos, engenharia de atributos, redução de dimensionalidade, seleção de variáveis e, por fim, validação estatística do conjunto de dados resultante.
 
-Neste \textit{template}, o autor irá encontrar diversas instruções e exemplos dos recursos do uso do \LaTeX~na plataforma \textit{Overleaf}. O \LaTeX~foi desenvolvido, inicialmente, na década de 80, por Leslie Lamport e é utilizado amplamente na produção de textos matemáticos e científicos, devido a sua alta qualidade tipográfica \cite{goossens1994latex}. 
+Para o desenvolvimento do pipeline, utilizou-se o \textit{IEEE Multimodal Emotion Recognition Dataset}, que contém registros de 16 sujeitos experimentais. O conjunto de dados abrange quatro modalidades distintas: eletroencefalografia (EEG) com 8 canais, eletrocardiografia (ECG), eletromiografia (EMG) e espectroscopia de infravermelho próximo funcional (fNIRS). Cada registro possui aproximadamente 60 segundos de duração por modalidade.
 
-O \textit{ShareLatex} é uma plataforma \textit{online} que pode ser acessado por meio de qualquer navegador de internet até mesmo de um \textit{smartphone}. Essa plataforma dispensa a instalação de aplicativos no computador para desenvolver trabalhos em \LaTeX. Também, não é necessário instalar \textit{packages}, ou seja, pacotes que permitem diferentes efeitos na formatação e no visual do trabalho. Todos os \textit{packages} que este \textit{template} utiliza são encontrados \textit{online}. 
+Este relatório detalha os resultados obtidos no primeiro estágio do pipeline, concentrando-se nos procedimentos de aquisição, carga de dados e validação inicial da integridade dos biossinais.
 
-Apresentam-se, também, neste modelo, algumas orientações de como desenvolver um trabalho acadêmico. Entretanto, este arquivo deve ser editado pelo autor de acordo com o seu trabalho sendo que a formatação já está de acordo com o aceito pela Universidade Federal do Ceará.  
+\section{Objetivos}
 
-A introdução, tem como finalidade, dar ao leitor uma visão concisa do tema investigado, ressaltando-se o assunto de forma delimitada, ou seja, enquadrando-o sob a perspectiva de uma área do conhecimento, de forma que fique evidente sobre o que se está investigando; a justificativa da escolha do tema; os objetivos do trabalho; o objeto de pesquisa que será investigado. Observe que não se divide a introdução em seções, mas a mesma informa como o trabalho ao todo está organizado.
+O objetivo central deste trabalho é a implementação de um fluxo de processamento reprodutível para biossinais multimodais, visando a geração de uma base de dados robusta para modelos de aprendizado de máquina. Especificamente, busca-se validar a integridade física dos sinais, verificar a conformidade com o teorema de amostragem de Nyquist para todas as modalidades, identificar falhas de aquisição e estabelecer o rigor metodológico necessário para as etapas subsequentes do projeto.
 
+\section{Organização do Trabalho}
 
-
-%Testando o símbolo $\symE$
-
-%\lipsum[5]  % Simulador de texto, ou seja, é um gerador de lero-lero.
-
-%	\begin{alineas}
-%		\item Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dictum sed tortor nec viverra.
-%		\item Praesent vitae nulla varius, pulvinar quam at, dapibus nisi. Aenean in commodo tellus. Mauris molestie est sed justo malesuada, quis feugiat tellus venenatis.
-%		\item Praesent quis erat eleifend, lacinia turpis in, tristique tellus. Nunc dictum sed tortor nec viverra.
-%		\item Mauris facilisis odio eu ornare tempor. Nunc dictum sed tortor nec viverra.
-%		\item Curabitur convallis odio at eros consequat pretium.
-%	\end{alineas}
-	
-
-	
+O presente documento está estruturado em cinco capítulos. O Capítulo \ref{cap:fundamentacao-teorica} aborda os conceitos teóricos sobre os biossinais analisados e as técnicas de processamento. O Capítulo \ref{chap:metodologia} descreve os métodos aplicados, incluindo a caracterização do dataset e do ambiente computacional. O Capítulo \ref{chap:resultados} apresenta a análise dos dados adquiridos e as validações realizadas. Por fim, o Capítulo \ref{chap:conclusoes-e-trabalhos-futuros} expõe as conclusões deste estágio e as propostas para o desenvolvimento das próximas fases do pipeline.

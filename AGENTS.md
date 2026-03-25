@@ -4,3 +4,4 @@
 - dont maintain dead code
 - prefer composable functions
 - KISS principle over all
+- use basedpyright and ruff
