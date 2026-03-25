@@ -7,11 +7,11 @@ Utilizou-se o \textit{IEEE Multimodal Emotion Recognition Dataset}, contendo reg
 
 \section{Protocolo Experimental}
 
-O protocolo de aquisição está subdividido em duas etapas principais. A etapa inicial compreende uma linha de base com duração de 30 segundos, durante a qual o participante permanece em estado de repouso para o estabelecimento dos parâmetros fisiológicos basais. A segunda etapa consiste em um estímulo emocional controlado com duração de 30 segundos, totalizando um período de registro aproximado de 60 segundos por participante.
+O protocolo de aquisição está subdividido em duas etapas principais. A etapa inicial compreende uma linha de base com duração de 30 segundos, durante a qual o participante permanece em estado de repouso para o estabelecimento dos parâmetros fisiológicos basais. A segunda etapa consiste em um estímulo emocional controlado com duração de 30 segundos, totalizando períodos de registro variáveis de aproximadamente 60 a 260 segundos por participante, dependendo da modalidade e do sujeito.
 
 \section{Validação do Teorema de Nyquist}
 
-As frequências de amostragem configuradas foram validadas conforme o teorema de amostragem de Nyquist. Para o sinal de EEG, com frequência máxima de 50 Hz e amostragem de 512 Hz, obteve-se uma razão de 5,12. No sinal de ECG, com frequência máxima de 40 Hz amostrado a 250 Hz, a razão calculada foi de 3,13. No EMG, considerando frequência de corte de 100 Hz e amostragem de 250 Hz, a razão foi de 2,50. Por fim, para o fNIRS, com frequência máxima de 2 Hz e amostragem de 16 Hz, a razão obtida foi de 4,00. Todos os parâmetros atendem plenamente ao critério de Nyquist, conforme detalhado na Tabela \ref{tab:nyquist_validacao}.
+As frequências de amostragem configuradas foram validadas conforme o teorema de amostragem de Nyquist. Para o sinal de EEG, com frequência máxima de 50 Hz e amostragem de 512 Hz, obteve-se uma razão de 5,12. No sinal de ECG, com frequência máxima de 40 Hz amostrado a 250 Hz, a razão calculada foi de 3,13. No EMG, considerando frequência de corte de 100 Hz e amostragem de 250 Hz, a razão foi de 1,25. Por fim, para o fNIRS, com frequência máxima de 2 Hz e amostragem de 16 Hz, a razão obtida foi de 4,00. Todos os parâmetros atendem plenamente ao critério de Nyquist, conforme detalhado na Tabela \ref{tab:nyquist_validacao}.
 
 \begin{table}[htbp]
     \centering
@@ -23,7 +23,7 @@ As frequências de amostragem configuradas foram validadas conforme o teorema de
         \midrule
         EEG & 512 & 50 & 5,12 & Sim \\
         ECG & 250 & 40 & 3,13 & Sim \\
-        EMG & 250 & 100 & 2,50 & Sim \\
+        EMG & 250 & 100 & 1,25 & Sim \\
         fNIRS & 16 & 2 & 4,00 & Sim \\
         \bottomrule
     \end{tabular}

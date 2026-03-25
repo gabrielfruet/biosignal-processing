@@ -1,10 +1,2 @@
 \chapter{Conclusões e Trabalhos Futuros}
 \label{chap:conclusoes-e-trabalhos-futuros}
-
-\section{Conclusões}
-
-Este relatório descreveu a execução bem-sucedida do primeiro estágio do pipeline de processamento de biossinais multimodais, focado na aquisição e validação inicial de integridade dos dados. O carregamento dos sinais dos 16 sujeitos do \textit{IEEE Multimodal Emotion Recognition Dataset} foi concluído, englobando as modalidades de EEG, ECG, EMG e fNIRS. Todas as modalidades apresentaram conformidade estrita com o teorema de amostragem de Nyquist, assegurando a validade espectral dos registros adquiridos. As falhas de integridade identificadas foram devidamente documentadas, incluindo clipping generalizado em diversas modalidades e registros planos em fNIRS, permitindo o diagnóstico precoce de instabilidades instrumentais e fisiológicas. O desenvolvimento deste estágio estabelece uma base metodológica sólida e reprodutível, essencial para a continuidade do pipeline de processamento de sinais e modelagem estatística.
-
-\section{Trabalhos Futuros}
-
-Para as próximas fases de desenvolvimento, propõe-se a implementação dos estágios subsequentes do fluxo de processamento. No segundo estágio, serão aplicados os índices de qualidade do sinal (SQI) para a quantificação objetiva da razão sinal-ruído e detecção de artefatos por meio de métricas de curtose e entropia. O terceiro estágio contemplará a análise estatística exploratória e testes de normalidade para a caracterização das distribuições dos biossinais brutos. No quarto estágio, serão desenvolvidas técnicas de limpeza e filtragem digital, abrangendo filtros notch para remoção de interferência da rede elétrica e filtros passa-banda para o isolamento das frequências de interesse de cada modalidade. O quinto estágio realizará a segmentação dos registros em janelas temporais fixas ou variáveis para a posterior extração de atributos temporais, espectrais e não lineares nos estágios finais do pipeline. O objetivo de longo prazo é a consolidação de um conjunto de dados validado para o treinamento de modelos de reconhecimento de padrões e aprendizado de máquina em biossinais.
