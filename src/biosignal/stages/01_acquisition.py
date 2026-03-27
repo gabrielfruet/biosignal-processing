@@ -84,20 +84,20 @@ def identify_problems(raw: Any) -> dict[str, list[str]]:
         if np.std(ch_data) < 1e-6:
             problems["flat_channels"].append(ch_name)
 
-        # Clipping: >1% samples at min or max OR single sample at extremes
+        # Clipping: >5% samples at min or max extremes
+        # True clipping means the signal is hitting the ADC saturation limit
         min_val, max_val = ch_data.min(), ch_data.max()
         range_val = max_val - min_val
         if range_val > 0:
-            clip_threshold_low = min_val + 0.0001 * range_val
-            clip_threshold_high = max_val - 0.0001 * range_val
-            clipped_indices = np.where(
-                (ch_data <= clip_threshold_low) | (ch_data >= clip_threshold_high)
-            )[0]
-            clipped_ratio = len(clipped_indices) / len(ch_data)
+            # Use 1% threshold from each end (2% total) to detect saturation
+            clip_threshold_low = min_val + 0.01 * range_val
+            clip_threshold_high = max_val - 0.01 * range_val
+            clipped_low = np.sum(ch_data <= clip_threshold_low)
+            clipped_high = np.sum(ch_data >= clip_threshold_high)
+            clipped_ratio = (clipped_low + clipped_high) / len(ch_data)
 
-            # Identify clipping if >1% of samples are clipped OR
-            # if we have any samples at the very extremes of a large range
-            if clipped_ratio > 0.01 or (clipped_ratio > 0 and range_val > 1000):
+            # Flag as clipping if >5% of samples are at the extremes
+            if clipped_ratio > 0.05:
                 problems["clipping_channels"].append(ch_name)
 
         # Dead channel: all values identical
