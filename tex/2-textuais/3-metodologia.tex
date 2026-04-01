@@ -3,7 +3,17 @@
 
 \section{Caracterização do Dataset}
 
-Utilizou-se o \textit{IEEE Multimodal Emotion Recognition Dataset}, contendo registros de 16 sujeitos experimentais abrangendo quatro biossinais principais: EEG, ECG, EMG e fNIRS. Os registros de EEG foram adquiridos pelo sistema Emotiv EPOC+, com 8 canais posicionados em AF7, AF8, F3, F4, PO7, PO8, PO3 e PO4, operando a uma frequência de amostragem de 512 Hz. As modalidades de ECG e EMG foram registradas com canais únicos a 250 Hz. O sistema de fNIRS registrou as concentrações de oxiemoglobina e desoxiemoglobina em dois canais a 16 Hz.
+Utilizou-se o \textit{Dataset of Multi-Modal Physiological Signals} 
+(disponível em IEEE DataPort) \cite{naser2023multimodal}, contendo registros 
+de 16 participantes expostos a estímulos visuais indutores de emoções. O 
+dataset compreende quatro modalidades de biossinais: EEG (Emotiv EPOC+, 8 canais), 
+ECG, EMG e fNIRS. Os sinais foram sincronizados e armazenados com marcadores 
+temporais indicando os momentos de linha de base e estimulação.
+
+Os 8 canais de EEG foram posicionados em AF7, AF8, F3, F4, PO7, PO8, PO3 e PO4, 
+operando a uma frequência de amostragem de 512 Hz. As modalidades de ECG e EMG 
+foram registradas com canais únicos a 250 Hz. O sistema de fNIRS registrou as 
+concentrações de oxiemoglobina e desoxiemoglobina em dois canais a 16 Hz.
 
 \section{Protocolo Experimental}
 
@@ -66,6 +76,52 @@ A decisão de aceitação de um segmento baseou-se em um conjunto de regras heur
     \end{cases}
 \end{equation}
 Adicionalmente, janelas com variância próxima a zero ($\sigma^2 < \epsilon$) foram automaticamente rotuladas como \textit{Loose Electrode} (Eletrodo Solto), enquanto variações de amplitude superiores a 10 vezes o desvio padrão global foram classificadas como \textit{Movement Artifact}.
+
+\subsection{Calibração Empírica dos Limiares}
+\label{sec:calibracao_limiares}
+
+Os limiares de rejeição ($\theta$) foram estabelecidos por meio de uma abordagem 
+empírica combinada com referências da literatura. O procedimento consistiu em:
+
+\begin{enumerate}
+    \item \textbf{Análise de Distribuição:} Calculou-se a distribuição estatística 
+    das métricas (SNR, curtose, entropia) para todos os segmentos de todos os 
+    sujeitos, identificando valores extremos e suas causas conhecidas.
+    
+    \item \textbf{Calibração por Modalidade:} Os limiares foram ajustados para cada 
+    modalidade considerando:
+    \begin{itemize}
+        \item EEG: Sensibilidade alta a piscadas oculares e artefatos de movimento 
+        (curtose elevada esperada).
+        \item ECG: Presença de \textit{spikes} R (curtose muito alta esperada).
+        \item EMG: Atividade muscular descontínua (entropia variável).
+        \item fNIRS: Relação sinal-ruído intrinsecamente baixa.
+    \end{itemize}
+    
+    \item \textbf{Validação Visual:} Os limiares foram validados por inspeção 
+    visual de segmentos aceitos e rejeitados, conforme exemplificado na 
+    Figura \ref{fig:sqi_comparison}.
+\end{enumerate}
+
+A Tabela \ref{tab:sqi_threshold_justification} sintetiza a fundamentação dos 
+limiares estabelecidos.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Justificativa empírica para os limiares de rejeição}
+    \label{tab:sqi_threshold_justification}
+    \begin{tabular}{p{2.5cm}p{3cm}p{3.5cm}}
+        \toprule
+        \textbf{Modalidade} & \textbf{Limiar} & \textbf{Fundamentação} \\
+        \midrule
+        EEG & SNR mín. $-5{,}0$ dB & Inferior ao ruído instrumental típico \\
+        EEG & Curtose máx. $50{,}0$ & Captura piscadas sem rejeitar fisiológico \\
+        ECG & Curtose máx. $100{,}0$ & Accomoda picos R pronunciados \\
+        EMG & Entropia mín. $0{,}20$ & Detecta bursts musculares íntegros \\
+        fNIRS & SNR mín. $-50{,}0$ dB & Ruído fotônico intrínseco \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \section{Estrutura do Pipeline de Processamento}
 
