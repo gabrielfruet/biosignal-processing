@@ -33,6 +33,40 @@ As frequências de amostragem configuradas foram validadas conforme o teorema de
 
 O fluxo de processamento foi desenvolvido em linguagem Python, versão 3.13, integrando a biblioteca MNE-Python para o pré-processamento de biossinais. As bibliotecas NumPy e Pandas foram empregadas para manipulação de tensores e matrizes de dados, enquanto Matplotlib e SciPy foram utilizadas para visualização e processamento digital de sinais. O gerenciamento de dependências foi executado por meio da ferramenta uv e do arquivo de configuração pyproject.toml, assegurando a reprodutibilidade do ambiente computacional.
 
+\section{Avaliação de Qualidade do Sinal (SQI)}
+\label{sec:metodo_sqi}
+
+No segundo estágio do pipeline, implementou-se um sistema de avaliação automática de qualidade (\textit{Signal Quality Index} --- SQI) para assegurar a validade fisiológica dos dados. O processo fundamenta-se na segmentação temporal e na extração de descritores estatísticos e espectrais.
+
+\subsection{Segmentação de Janelas}
+Os sinais brutos foram particionados em janelas de tempo fixas de $T = 5$ segundos. Esta duração foi selecionada para capturar características quase-estacionárias dos biossinais (especialmente EEG e ECG) enquanto permite uma resolução temporal adequada para a detecção de transientes de ruído e artefatos de movimento.
+
+\subsection{Métricas de Qualidade Estatística}
+Para cada janela $w_i$, calcularam-se métricas de momentos centrais:
+\begin{itemize}
+    \item \textbf{Curtose ($K$):} Utilizada para detectar \textit{outliers} e picos de tensão (\textit{spikes}) anormais, onde valores elevados indicam presença de ruído impulsivo ou transientes instrumentais.
+    \item \textbf{Assimetria ($S$):} Medida da falta de simetria na distribuição de amplitudes, sensível a desvios de linha de base e saturação assimétrica (\textit{clipping}).
+    \item \textbf{Amplitude IQR:} A amplitude interquartil foi empregada como descritor de dispersão robusto para identificar variações bruscas de magnitude associadas a movimentos do sujeito.
+\end{itemize}
+
+\subsection{Análise no Domínio da Frequência}
+A integridade espectral foi avaliada por meio de:
+\begin{itemize}
+    \item \textbf{Relação Sinal-Ruído (SNR):} Estimada através da densidade espectral de potência ($PSD$) calculada pelo método de Welch. O SNR em dB foi definido pela razão entre a potência na banda de interesse fisiológico e a potência do ruído de fundo em bandas adjacentes.
+    \item \textbf{Entropia Espectral ($H_{spec}$):} Calculada como a entropia de Shannon normalizada do espectro de potências. Sinais biológicos íntegros apresentam complexidade espectral característica, enquanto sinais contaminados por ruído branco ou interferência senoidal pura (60 Hz) apresentam desvios significativos nesta métrica.
+\end{itemize}
+
+\subsection{Classificação e Lógica de Rejeição}
+A decisão de aceitação de um segmento baseou-se em um conjunto de regras heurísticas e limiares ($\theta$) específicos por modalidade $m$:
+\begin{equation}
+    f(w_i) = 
+    \begin{cases} 
+    \text{Aceito}, & \text{se } SNR > \theta_{SNR} \land K < \theta_{K} \land H > \theta_{H} \\
+    \text{Rejeitado}, & \text{caso contrário}
+    \end{cases}
+\end{equation}
+Adicionalmente, janelas com variância próxima a zero ($\sigma^2 < \epsilon$) foram automaticamente rotuladas como \textit{Loose Electrode} (Eletrodo Solto), enquanto variações de amplitude superiores a 10 vezes o desvio padrão global foram classificadas como \textit{Movement Artifact}.
+
 \section{Estrutura do Pipeline de Processamento}
 
-O pipeline projetado compreende dez estágios sequenciais. O estágio inicial corresponde à aquisição e validação de dados brutos. O segundo estágio contempla o cálculo de índices de qualidade (SQI) para a rejeição de segmentos. O terceiro estágio executa análises estatísticas e testes de hipótese. O quarto estágio aplica técnicas de filtragem e correção de artefatos. O quinto estágio realiza a segmentação temporal dos sinais em janelas. O sexto estágio executa a extração de atributos nos domínios do tempo e da frequência. O sétimo estágio realiza a engenharia de novos atributos. O oitavo estágio aplica redução de dimensionalidade por componentes principais. O nono estágio executa a seleção de variáveis informativas. O décimo estágio valida estatisticamente o conjunto final. Este relatório concentra-se na execução do primeiro estágio do projeto.
+O pipeline projetado compreende dez estágios sequenciais. O estágio inicial corresponde à aquisição e validação de dados brutos. O segundo estágio contempla o cálculo de índices de qualidade (SQI) para a rejeição de segmentos. O terceiro estágio executa análises estatísticas e testes de hipótese. O quarto estágio aplica técnicas de filtragem e correção de artefatos. O quinto estágio realiza a segmentação temporal dos sinais em janelas. O sexto estágio executa a extração de atributos nos domínios do tempo e da frequência. O sétimo estágio realiza a engenharia de novos atributos. O oitavo estágio aplica redução de dimensionalidade por componentes principais. O nono estágio executa a seleção de variáveis informativas. O décimo estágio valida estatisticamente o conjunto final. Este relatório concentra-se na execução dos dois primeiros estágios do projeto.
