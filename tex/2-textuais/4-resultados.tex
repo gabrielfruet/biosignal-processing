@@ -87,7 +87,14 @@ A visualização dos sinais brutos para o sujeito 000, abrangendo as quatro moda
 No segundo estágio do pipeline, executou-se a avaliação automática de qualidade (SQI) através da análise segmentada dos sinais. 
 
 \subsection{Calibração de Limiares por Modalidade}
-A Tabela \ref{tab:sqi_thresholds} apresenta os limiares de rejeição estabelecidos para cada modalidade, calibrados para assegurar a robustez estatística das janelas de sinal. Observa-se que a modalidade fNIRS foi configurada com parâmetros de SNR extremamente permissivos devido à natureza do ruído intrínseco, enquanto o EEG exige maior estabilidade espectral.
+Os limiares de rejeição foram estabelecidos conforme descrito na 
+Seção \ref{sec:calibracao_limiares}, calibrados para assegurar a robustez 
+estatística das janelas de sinal. Observa-se que a modalidade fNIRS foi 
+configurada com parâmetros de SNR extremamente permissivos devido à natureza 
+do ruído intrínseco, enquanto o EEG exige maior estabilidade espectral.
+
+A Tabela \ref{tab:sqi_thresholds} apresenta os limiares de rejeição 
+estabelecidos para cada modalidade.
 
 \begin{table}[htbp]
     \centering
@@ -133,6 +140,29 @@ A Figura \ref{fig:sqi_comparison} ilustra a diferenciação automática entre se
     \caption{Avaliação de qualidade (SQI) para EEG: comparação entre segmento aceito e segmento rejeitado por alta curtose (instrumental).}
     \label{fig:sqi_comparison}
 \end{figure}
+
+\subsection{Comparação com Abordagens da Literatura}
+\label{sec:comparacao_literatura}
+
+A Tabela \ref{tab:comparacao_sqi} apresenta a comparação entre a metodologia 
+proposta e abordagens consolidadas da literatura para avaliação de qualidade 
+de biossinais.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Comparação entre metodologias de SQI}
+    \label{tab:comparacao_sqi}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Trabalho} & \textbf{Modalidade} & \textbf{Métricas Utilizadas} & \textbf{Abordagem} \\
+        \midrule
+        \cite{cuena2019tool} & ECG & Curtose, Assimetria & hOS-SQI \\
+        \cite{zheng2019eeg} & EEG & 6 métricas combinadas & EEGQI Framework \\
+        \cite{taylor2022robustness} & ECG & SQIp, SQIsnr, SQIkur & Análise de Robustez \\
+        \textbf{Proposto} & EEG/ECG/EMG & SNR, Curtose, Entropia & Thresholds Empíricos \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \section{Discussão dos Achados}
 
