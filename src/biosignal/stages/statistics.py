@@ -151,7 +151,7 @@ def test_normality(data: np.ndarray) -> dict:
     std_val = np.std(data_clean)
     if std_val > 0:
         standardized = (data_clean - mean_val) / std_val
-        ks_stat, ks_p = stats.kstest(standardized, "norm") | j
+        ks_stat, ks_p = stats.kstest(standardized, "norm")
     else:
         ks_stat, ks_p = None, None
 
