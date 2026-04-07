@@ -129,7 +129,11 @@ def test_normality(data: np.ndarray) -> dict:
 
     if len(data_clean) < 3:
         return {
-            "shapiro_wilk": {"stat": None, "p_value": None, "note": "insufficient_data"},
+            "shapiro_wilk": {
+                "stat": None,
+                "p_value": None,
+                "note": "insufficient_data",
+            },
             "ks_test": {"stat": None, "p_value": None, "note": "insufficient_data"},
             "is_normal": None,
             "interpretation": "Insufficient data for normality testing (n < 3)",
@@ -165,9 +169,7 @@ def test_normality(data: np.ndarray) -> dict:
             "Data appears normally distributed based on Shapiro-Wilk test (p > 0.05)"
         )
     else:
-        interpretation = (
-            "Data deviates from normal distribution based on Shapiro-Wilk test (p <= 0.05)"
-        )
+        interpretation = "Data deviates from normal distribution based on Shapiro-Wilk test (p <= 0.05)"
 
     return {
         "shapiro_wilk": {
@@ -219,9 +221,7 @@ def test_homoscedasticity(data_groups: list[np.ndarray]) -> dict:
             "Variances appear equal across groups based on Levene's test (p > 0.05)"
         )
     else:
-        interpretation = (
-            "Variances differ significantly across groups based on Levene's test (p <= 0.05)"
-        )
+        interpretation = "Variances differ significantly across groups based on Levene's test (p <= 0.05)"
 
     return {
         "levene": {
@@ -262,7 +262,14 @@ def plot_histogram(
     fig, ax = plt.subplots(figsize=(10, 6))
 
     # Plot histogram
-    ax.hist(data_clean, bins=bins, density=True, alpha=0.7, color="steelblue", edgecolor="white")
+    ax.hist(
+        data_clean,
+        bins=bins,
+        density=True,
+        alpha=0.7,
+        color="steelblue",
+        edgecolor="white",
+    )
 
     # Overlay normal distribution
     mean_val = np.mean(data_clean)
@@ -274,12 +281,16 @@ def plot_histogram(
     # Labels and title
     ax.set_xlabel("Amplitude")
     ax.set_ylabel("Density")
-    ax.set_title(f"{modality.upper()} - {channel} - Subject {subject_id:03d}\nHistogram with Normal Distribution")
+    ax.set_title(
+        f"{modality.upper()} - {channel} - Subject {subject_id:03d}\nHistogram with Normal Distribution"
+    )
     ax.legend()
     ax.grid(True, alpha=0.3)
 
     # Save figure
-    output_path = FIGURES_DIR / f"stat_histogram_{subject_id:03d}_{modality}_{channel}.png"
+    output_path = (
+        FIGURES_DIR / f"stat_histogram_{subject_id:03d}_{modality}_{channel}.png"
+    )
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
 
@@ -301,7 +312,9 @@ def plot_boxplot(
 
     # Prepare data for boxplot
     channels = sorted(data_per_channel.keys())
-    data_list = [data_per_channel[ch][~np.isnan(data_per_channel[ch])] for ch in channels]
+    data_list = [
+        data_per_channel[ch][~np.isnan(data_per_channel[ch])] for ch in channels
+    ]
 
     # Filter out empty channels
     valid_data = [(ch, d) for ch, d in zip(channels, data_list) if len(d) >= 3]
@@ -359,7 +372,9 @@ def plot_qq(
     # Q-Q plot
     stats.probplot(data_clean, dist="norm", plot=ax)
 
-    ax.set_title(f"{modality.upper()} - {channel} - Subject {subject_id:03d}\nQ-Q Plot (Normality Check)")
+    ax.set_title(
+        f"{modality.upper()} - {channel} - Subject {subject_id:03d}\nQ-Q Plot (Normality Check)"
+    )
     ax.grid(True, alpha=0.3)
 
     # Save figure
@@ -429,9 +444,13 @@ def plot_correlation_heatmap(
         for j in range(n):
             val = corr_matrix[i, j]
             color = "white" if abs(val) > 0.5 else "black"
-            ax.text(j, i, f"{val:.2f}", ha="center", va="center", color=color, fontsize=7)
+            ax.text(
+                j, i, f"{val:.2f}", ha="center", va="center", color=color, fontsize=7
+            )
 
-    ax.set_title(f"Subject {subject_id:03d} - Correlation Heatmap\n(Across Modalities/Channels)")
+    ax.set_title(
+        f"Subject {subject_id:03d} - Correlation Heatmap\n(Across Modalities/Channels)"
+    )
     ax.set_xlabel("Signal")
     ax.set_ylabel("Signal")
 
@@ -496,13 +515,17 @@ def process_modality(
         plot_qq(channel_data, modality, ch_name, subject_id)
 
     # Generate boxplot for this modality
-    data_per_channel = {ch_names[i]: raw_data[i] for i in range(min(len(ch_names), raw_data.shape[0]))}
+    data_per_channel = {
+        ch_names[i]: raw_data[i] for i in range(min(len(ch_names), raw_data.shape[0]))
+    }
     plot_boxplot(data_per_channel, modality, subject_id)
 
     # Aggregate statistics across channels
     if raw_data.shape[0] > 1:
         # Stack all channels
-        all_channel_data = raw_data.reshape(raw_data.shape[0], -1).T  # (n_samples, n_channels)
+        all_channel_data = raw_data.reshape(
+            raw_data.shape[0], -1
+        ).T  # (n_samples, n_channels)
         # Flatten to 1D for aggregate stats
         aggregate_flat = all_channel_data.flatten()
         aggregate_flat = aggregate_flat[~np.isnan(aggregate_flat)]
@@ -515,13 +538,21 @@ def process_modality(
             }
 
         # Homoscedasticity test across channels
-        channel_groups = [raw_data[i][~np.isnan(raw_data[i])] for i in range(raw_data.shape[0])]
-        results["homoscedasticity"]["between_channels"] = test_homoscedasticity(channel_groups)
+        channel_groups = [
+            raw_data[i][~np.isnan(raw_data[i])] for i in range(raw_data.shape[0])
+        ]
+        results["homoscedasticity"]["between_channels"] = test_homoscedasticity(
+            channel_groups
+        )
 
     if verbose:
-        norm_count = sum(1 for ch in results["channels"].values() if ch["normality"].get("is_normal"))
+        norm_count = sum(
+            1 for ch in results["channels"].values() if ch["normality"].get("is_normal")
+        )
         total_ch = len(results["channels"])
-        print(f"      {modality.upper()}: {total_ch} channels, {norm_count}/{total_ch} normal")
+        print(
+            f"      {modality.upper()}: {total_ch} channels, {norm_count}/{total_ch} normal"
+        )
 
     return results
 
@@ -572,7 +603,9 @@ def _compile_summary_stats(all_subject_results: dict) -> tuple[str, str]:
     return normality_summary, homoscedasticity_summary
 
 
-def _generate_global_correlation(all_correlation_data: dict[int, dict[str, np.ndarray]]) -> None:
+def _generate_global_correlation(
+    all_correlation_data: dict[int, dict[str, np.ndarray]],
+) -> None:
     """Generate aggregate correlation heatmap across all subjects.
 
     Args:
@@ -588,7 +621,9 @@ def _generate_global_correlation(all_correlation_data: dict[int, dict[str, np.nd
                 global_corr_data[key] = []
             global_corr_data[key].extend(values.tolist()[:5000])  # Limit samples
 
-    global_corr_np = {k: np.array(v) for k, v in global_corr_data.items() if len(v) > 100}
+    global_corr_np = {
+        k: np.array(v) for k, v in global_corr_data.items() if len(v) > 100
+    }
     if global_corr_np:
         plot_correlation_heatmap(global_corr_np, 999)  # 999 = aggregate
 
@@ -664,7 +699,9 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:  # noqa: 
     _generate_global_correlation(all_correlation_data)
 
     # Compile overall summary
-    normality_summary, homoscedasticity_summary = _compile_summary_stats(all_subject_results)
+    normality_summary, homoscedasticity_summary = _compile_summary_stats(
+        all_subject_results
+    )
 
     # Save aggregated metrics
     aggregate_metrics = {

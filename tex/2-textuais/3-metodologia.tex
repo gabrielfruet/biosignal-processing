@@ -103,6 +103,29 @@ empírica combinada com referências da literatura. O procedimento consistiu em:
     Figura \ref{fig:sqi_comparison}.
 \end{enumerate}
 
+\section{Análise Estatística Descritiva e Testes de Hipótese}
+\label{sec:metodo_estatistica}
+
+No terceiro estágio, realizou-se uma caracterização estatística exaustiva dos biossinais para compreender as distribuições de amplitude e as dependências entre canais.
+
+\subsection{Estatística Descritiva e Momentos de Alta Ordem}
+Para cada canal de cada modalidade, computaram-se:
+\begin{itemize}
+    \item \textbf{Medidas de Tendência Central e Dispersão:} Média, mediana, variância, desvio padrão e intervalo interquartil (IQR).
+    \item \textbf{Momentos de Alta Ordem:} Curtose e Assimetria (\textit{Skewness}), essenciais para caracterizar o desvio da normalidade e a presença de caudas pesadas no sinal.
+\end{itemize}
+
+\subsection{Testes de Normalidade e Homocedasticidade}
+A natureza estocástica dos sinais foi avaliada por meio de:
+\begin{itemize}
+    \item \textbf{Teste de Shapiro-Wilk \cite{shapiro1965analysis}:} Aplicado como teste primário de normalidade (limitado a 5000 amostras).
+    \item \textbf{Teste de Kolmogorov-Smirnov (K-S):} Utilizado como teste de aderência contra uma distribuição normal teórica.
+    \item \textbf{Teste de Levene \cite{levene1960contributions}:} Empregado para avaliar a homocedasticidade (igualdade de variâncias) entre os canais de uma mesma modalidade, sendo robusto a desvios de normalidade.
+\end{itemize}
+
+\subsection{Análise de Correlação Inter-Modalidade}
+Calculou-se a matriz de correlação de Pearson entre todos os canais sincronizados. Esta análise permite identificar redundâncias entre canais de EEG e acoplamentos fisiológicos entre diferentes modalidades (ex: influência da frequência cardíaca no sinal fNIRS).
+
 A Tabela \ref{tab:sqi_threshold_justification} sintetiza a fundamentação dos 
 limiares estabelecidos.
 
