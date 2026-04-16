@@ -43,6 +43,10 @@ def _get_stage_func(stage: int):
             from biosignal.stages import sqi
 
             _STAGE_FUNCTIONS[stage] = sqi.run
+        elif stage == 3:
+            from biosignal.stages import statistics
+
+            _STAGE_FUNCTIONS[stage] = statistics.run
         else:
             raise ValueError(f"Stage {stage} not yet implemented")
     return _STAGE_FUNCTIONS[stage]

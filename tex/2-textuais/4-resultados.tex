@@ -164,8 +164,85 @@ de biossinais.
     \end{tabular}
 \end{table}
 
+\section{Análise Estatística dos Sinais}
+\label{sec:resultados_estatistica}
+
+No terceiro estágio do pipeline, realizou-se a caracterização estatística abrangente dos registros biosignais. A Tabela \ref{tab:resumo_estatistico} apresenta os descritores consolidados para o primeiro sujeito (S000), demonstrando a variabilidade entre modalidades.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Caracterização estatística descritiva (Sujeito 000)}
+    \label{tab:resumo_estatistico}
+    \begin{tabular}{lccccc}
+        \toprule
+        \textbf{Modalidade} & \textbf{Canal} & \textbf{Média} & \textbf{Desvio Padrão} & \textbf{Assimetria} & \textbf{Curtose} \\
+        \midrule
+        EEG & AF7 & $-64254{,}6$ & $3266{,}8$ & $1{,}89$ & $4{,}59$ \\
+        EEG & AF8 & $-67520{,}9$ & $3297{,}9$ & $1{,}89$ & $4{,}91$ \\
+        ECG & ECG & $-530{,}3$ & $799{,}9$ & $200{,}2$ & $47055{,}6$ \\
+        EMG & EMG & $8530{,}3$ & $227{,}5$ & $-0{,}26$ & $30{,}23$ \\
+        fNIRS & HbO & $4{,}1 \times 10^{-9}$ & $3{,}5 \times 10^{-7}$ & $-9{,}01$ & $102{,}87$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Resultados dos Testes de Normalidade}
+O teste de Shapiro-Wilk revelou que 100\% (192/192) dos canais analisados em todos os 16 sujeitos divergem significativamente de uma distribuição normal ($p < 0,05$). Tais achados são corroborados pelos altos valores de curtose e assimetria, especialmente na modalidade ECG (Curtose $\approx 47055{,}6$), evidenciando a presença de picos R proeminentes e ruído impulsivo. A Figura \ref{fig:histograma_eeg} ilustra a distribuição de amplitude para o canal AF7 de EEG, comparando-a à curva normal teórica.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../output/figures/stat_histogram_000_eeg_AF7.png}
+    \caption{Histograma de amplitudes do canal EEG-AF7 (Sujeito 000) com sobreposição de curva normal teórica.}
+    \label{fig:histograma_eeg}
+\end{figure}
+
+Para avaliar visualmente o desvio da normalidade e a dispersão entre canais, a Figura \ref{fig:qq_boxplot} apresenta o gráfico Q-Q (\textit{Quantile-Quantile}) e o \textit{boxplot} comparativo para a modalidade EEG.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../output/figures/stat_qq_000_eeg_AF7.png}
+        \caption{Gráfico Q-Q (AF7)}
+        \label{fig:qq_eeg}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../output/figures/stat_boxplot_000_eeg.png}
+        \caption{Boxplot por Canal}
+        \label{fig:boxplot_eeg}
+    \end{subfigure}
+    \caption{Visualizações de diagnóstico estatístico para EEG (Sujeito 000): (a) avaliação de normalidade via quantis e (b) dispersão e \textit{outliers} entre os 8 canais.}
+    \label{fig:qq_boxplot}
+\end{figure}
+
+\subsection{Testes de Homocedasticidade}
+A análise de homocedasticidade pelo teste de Levene entre os 8 canais de EEG demonstrou diferenças significativas de variância ($W = 7048{,}7, p < 0,05$). Este resultado sugere que os sensores de EEG, apesar de serem da mesma tecnologia (Emotiv EPOC+), apresentam níveis de ruído instrumental e impedância sensor-pele heterogêneos entre os locais de escalpo. Para a modalidade fNIRS, a falta de homocedasticidade entre HbO e HbR ($p \approx 3{,}1 \times 10^{-39}$) reforça a instabilidade desta aquisição.
+
+\subsection{Correlação entre Canais e Modalidades}
+A matriz de correlação cruzada, apresentada na Figura \ref{fig:heatmap_correlacao}, revela fortes interdependências entre os canais de EEG frontais (AF7 e AF8, $r > 0,80$), conforme esperado pela proximidade física dos sensores. Observou-se correlação desprezível entre as modalidades (ex: EEG vs ECG), indicando que os artefatos de pulsação cardíaca no registro de EEG não são dominantes no estado bruto.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../output/figures/stat_correlation_000.png}
+    \caption{Matriz de correlação cruzada entre canais e modalidades para o Sujeito 000.}
+    \label{fig:heatmap_correlacao}
+\end{figure}
+
+Para avaliar a estabilidade das correlações em nível populacional, a Figura \ref{fig:heatmap_global} apresenta a matriz agregada considerando o conjunto total de sujeitos analisados.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../output/figures/stat_correlation_999.png}
+    \caption{Matriz de correlação global agregada para todos os sujeitos do dataset.}
+    \label{fig:heatmap_global}
+\end{figure}
+
 \section{Discussão dos Achados}
 
 A análise integrada dos resultados indica que os sinais de EEG apresentam a maior estabilidade qualitativa, com baixas taxas de rejeição. No entanto, as modalidades de ECG e EMG demonstraram alta dependência da qualidade do contato sensor-pele e de artefatos de movimento, resultando em perdas significativas de janelas temporais. 
 
-A modalidade de fNIRS apresentou taxa de rejeição próxima à totalidade ($>95\%$), confirmando falhas estruturais na aquisição original do dataset (distâncias entre fonte e detector nulas). Tais achados justificam a exclusão do fNIRS nas etapas subsequentes de análise estatística (Estágio 3) e filtragem (Estágio 4), otimizando o pipeline para os biossinais que mantêm integridade fisiológica mínima para extração de atributos.
+A rejeição de hipótese nula nos testes de normalidade (Shapiro-Wilk) e homocedasticidade (Levene) justifica a adoção de estratégias de processamento robusto nos estágios subsequentes. Em particular, a filtragem espacial e a normalização de variância (Z-score por canal) tornam-se indispensáveis antes da extração de atributos, para mitigar os vieses introduzidos pela heterogeneidade instrumental e pelos artefatos de cauda pesada.
+
+A modalidade de fNIRS apresentou taxa de rejeição próxima à totalidade ($>95\%$), confirmando falhas estruturais na aquisição original do dataset (distâncias entre fonte e detector nulas). Tais achados, aliados à curtose anômala ($>100$), justificam a exclusão definitiva do fNIRS nas etapas de filtragem (Estágio 4) e extração de atributos (Estágio 6), otimizando o pipeline para os biossinais que mantêm integridade fisiológica mínima.
