@@ -144,8 +144,41 @@ limiares estabelecidos.
         fNIRS & SNR mín. $-50{,}0$ dB & Ruído fotônico intrínseco \\
         \bottomrule
     \end{tabular}
+
+\section{Limpeza e Correção de Sinais}
+\label{sec:metodo_limpeza}
+
+No quarto estágio do pipeline, implementou-se um conjunto de técnicas de pré-processamento para correção de artefatos e normalização estatística dos sinais biossignais.
+
+\subsection{Filtragem no Domínio da Frequência}
+
+A remoção de interferência elétrica foi realizada por meio de dois filtros digitais complementares:
+
+\begin{itemize}
+    \item \textbf{Filtro Notch (50 Hz):} Elimina a interferência da rede elétrica brasileira (60 Hz para EUA, 50 Hz para Europa). Conforme observado nos dados brutos, verificou-se que o sistema Emotiv EPOC+ apresenta \textit{offset} DC elevado, sendo suscetível a interferências de 50 Hz em ambientes hospitalares.
+    \item \textbf{Filtro Passa-Banda (Band-Pass):} Parâmetros específicos por modalidade para preservar a banda fisiológica de interesse:
+    \begin{itemize}
+        \item EEG: 0,5 -- 50 Hz (captura bandas delta a beta)
+        \item ECG: 0,5 -- 50 Hz (preserva complexo QRS e ondas T)
+        \item EMG: 20 -- 250 Hz (banda clássica de EMG de superfície)
+        \item fNIRS: 0,01 -- 0,1 Hz (apenas variações hemodinâmicas lentas)
+    \end{itemize}
+\end{itemize}
+
+\subsection{Interpolação de Lacunas}
+
+Gaps temporais (ausências de sinal) foram identificados e preenchidos por interpolação linear para extensão máxima de 1 segundo. Lacunas maiores foram preservadas como segmentos inválidos para posterior rejeição. Durante a implementação, identificou-se e corrigiu-se um erro de indexação na função \texttt{interpolate\_gaps()} que causava violação de limites em bordas de arrays.
+
+\subsection{Winsorização}
+
+A normalização de \textit{outliers} foi aplicada por Winsorização no percentil 5\textsuperscript{o} e 95\textsuperscript{o}, substituindo valores extremos pelos limiares correspondentes em vez de descartá-los. Esta abordagem preserva o número de amostras enquanto reduz a influência de artefatos impulsivos.
+
+\subsection{Rejeição por Z-Score}
+
+Após a Winsorização, outliers residuais foram identificados por z-scores superiores a 3,0 em valor absoluto, correspondendo a aproximadamente 0,27\% de rejeição sob distribuição normal teórica.
+
 \end{table}
 
 \section{Estrutura do Pipeline de Processamento}
 
-O pipeline projetado compreende dez estágios sequenciais. O estágio inicial corresponde à aquisição e validação de dados brutos. O segundo estágio contempla o cálculo de índices de qualidade (SQI) para a rejeição de segmentos. O terceiro estágio executa análises estatísticas e testes de hipótese. O quarto estágio aplica técnicas de filtragem e correção de artefatos. O quinto estágio realiza a segmentação temporal dos sinais em janelas. O sexto estágio executa a extração de atributos nos domínios do tempo e da frequência. O sétimo estágio realiza a engenharia de novos atributos. O oitavo estágio aplica redução de dimensionalidade por componentes principais. O nono estágio executa a seleção de variáveis informativas. O décimo estágio valida estatisticamente o conjunto final. Este relatório concentra-se na execução dos dois primeiros estágios do projeto.
+O pipeline projetado compreende dez estágios sequenciais. O estágio inicial corresponde à aquisição e validação de dados brutos. O segundo estágio contempla o cálculo de índices de qualidade (SQI) para a rejeição de segmentos. O terceiro estágio executa análises estatísticas e testes de hipótese. O quarto estágio aplica técnicas de filtragem e correção de artefatos. O quinto estágio realiza a segmentação temporal dos sinais em janelas. O sexto estágio executa a extração de atributos nos domínios do tempo e da frequência. O sétimo estágio realiza a engenharia de novos atributos. O oitavo estágio aplica redução de dimensionalidade por componentes principais. O nono estágio executa a seleção de variáveis informativas. O décimo estágio valida estatisticamente o conjunto final. Este relatório concentra-se na execução dos quatro primeiros estágios do projeto.

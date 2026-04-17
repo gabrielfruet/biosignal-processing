@@ -47,6 +47,34 @@ def _get_stage_func(stage: int):
             from biosignal.stages import statistics
 
             _STAGE_FUNCTIONS[stage] = statistics.run
+        elif stage == 4:
+            from biosignal.stages import cleaning
+
+            _STAGE_FUNCTIONS[stage] = cleaning.run
+        elif stage == 5:
+            from biosignal.stages import segmentation
+
+            _STAGE_FUNCTIONS[stage] = segmentation.run
+        elif stage == 6:
+            from biosignal.stages import features
+
+            _STAGE_FUNCTIONS[stage] = features.run
+        elif stage == 7:
+            from biosignal.stages import engineering
+
+            _STAGE_FUNCTIONS[stage] = engineering.run
+        elif stage == 8:
+            from biosignal.stages import dimreduction
+
+            _STAGE_FUNCTIONS[stage] = dimreduction.run
+        elif stage == 9:
+            from biosignal.stages import selection
+
+            _STAGE_FUNCTIONS[stage] = selection.run
+        elif stage == 10:
+            from biosignal.stages import validation
+
+            _STAGE_FUNCTIONS[stage] = validation.run
         else:
             raise ValueError(f"Stage {stage} not yet implemented")
     return _STAGE_FUNCTIONS[stage]
@@ -56,7 +84,9 @@ def _get_stage_func(stage: int):
 def run(
     stage: int = typer.Argument(1, help="Stage number (1-10)"),
     subject: Optional[int] = typer.Option(None, help="Process specific subject only"),
-    verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable verbose output"),
+    verbose: bool = typer.Option(
+        False, "--verbose", "-v", help="Enable verbose output"
+    ),
 ):
     """Run a pipeline stage."""
     if stage < 1 or stage > 10:
@@ -102,7 +132,8 @@ def info(
                 typer.echo(f"\nSubject {subject:03d} is available")
             else:
                 typer.secho(
-                    f"Subject {subject:03d} not found in dataset", fg=typer.colors.YELLOW
+                    f"Subject {subject:03d} not found in dataset",
+                    fg=typer.colors.YELLOW,
                 )
     except FileNotFoundError as e:
         typer.secho(f"Error: {e}", fg=typer.colors.RED)

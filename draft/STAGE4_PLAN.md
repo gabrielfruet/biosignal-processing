@@ -83,7 +83,11 @@ Raw Signal → Notch Filter → Band-Pass Filter → Clean Signal
 ```
 d = (mean_before - mean_after) / pooled_std
 ```
-- Interpret: |d| < 0.2 (negligible), 0.2-0.5 (small), 0.5-0.8 (medium), > 0.8 (large)
+- Interpret: 
+    - |d| < 0.2 (negligible), 
+    - 0.2< |d| < 0.5 (small)
+    - 0.5 < |d| < 0.8 (medium)
+    - |d| > 0.8 (large)
 
 ### 4.3 Quality Metrics
 - SNR improvement per modality

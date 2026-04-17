@@ -239,6 +239,45 @@ Para avaliar a estabilidade das correlações em nível populacional, a Figura \
     \label{fig:heatmap_global}
 \end{figure}
 
+
+\section{Limpeza e Correção de Sinais}
+\label{sec:resultados_limpeza}
+
+No quarto estágio do pipeline, aplicou-se o conjunto de técnicas de filtragem e normalização conforme descrito na Seção \ref{sec:metodo_limpeza}. A Tabela \ref{tab:cleaning_summary} apresenta o resumo consolidado dos efeitos da limpeza para o sujeito 000, evidenciando reduções drásticas de variância e normalização de curtose.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Efeitos da limpeza de sinais (Sujeito 000)}
+    \label{tab:cleaning_summary}
+    \begin{tabular}{lccccc}
+        \toprule
+        \textbf{Modalidade} & \textbf{Var. Redução (\%)} & \textbf{Curtose (antes)} & \textbf{Curtose (depois)} & \textbf{SNR (dB)} & \textbf{Amostras Winsorizadas} \\
+        \midrule
+        EEG (AF7) & 99,9 & 4,60 & 3,44 & 12,36 & 7.418 \\
+        EEG (PO7) & 99,9 & 221,83 & -1,12 & -2,06 & 7.418 \\
+        ECG & 94,0 & 47055,61 & 1,30 & 6,94 & 6.488 \\
+        EMG & 99,8 & 30,23 & -0,95 & -1,26 & 6.488 \\
+        fNIRS (HbO) & 97,2 & 102,87 & 1,61 & -60,00 & 232 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Redução de Variância e Efeito de Cohen}
+
+Observou-se que os coeficientes $d$ de Cohen calculados entre os estados antes e depois da limpeza indicam efeito de tamanho grande ($|d| > 0{,}8$) para todas as modalidades principais (EEG, ECG, EMG), confirmando que o processo de limpeza altera substancialmente a distribuição dos sinais. A variância reduziu-se em mais de 99\% para EEG e EMG, e 94\% para ECG, evidenciando a eficácia da combinação de filtragem e Winsorização na atenuação de ruído instrumental.
+
+\subsection{Normalização de Curtose}
+
+A curtose, que originalmente apresentava valores extremos (especialmente em ECG com $K \approx 47000$ devido aos picos R), foi normalizada para valores próximos de zero após a limpeza ($|K| < 3$), indicando distribuições aproximadamente mesocúrticas. Para o canal PO7 de EEG, a curtose passou de 221,83 para -1,12, evidenciando a remoção de \textit{spikes} instrumentais.
+
+\subsection{Interpolação de Lacunas}
+
+Identificou-se que os sinais não apresentaram lacunas significativas (gaps $> 1$s) que requeressem interpolação nos dados do sujeito 000. A função de interpolação foi executada corretamente em todos os demais sujeitos sem ocorrência de erros de indexação, após a correção do \textit{bug} na função \texttt{interpolate\_gaps()}.
+
+\subsection{Manutenção de fNIRS}
+
+Conforme planejado na discussão do Estágio 3, a modalidade fNIRS foi mantida no pipeline de limpeza apesar de apresentar SNR constante de -60 dB e efeito de tamanho negligible. A justificativa para manutenção é que a filtragem passa-banda (0,01--0,1 Hz) reduz a variância em mais de 80\% (Tabela \ref{tab:cleaning_summary}), sugerindo que mesmo um sinal ruidoso pode beneficiar-se do pré-processamento para análises de tendências lentas.
+
 \section{Discussão dos Achados}
 
 A análise integrada dos resultados indica que os sinais de EEG apresentam a maior estabilidade qualitativa, com baixas taxas de rejeição. No entanto, as modalidades de ECG e EMG demonstraram alta dependência da qualidade do contato sensor-pele e de artefatos de movimento, resultando em perdas significativas de janelas temporais. 
