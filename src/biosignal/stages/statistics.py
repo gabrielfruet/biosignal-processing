@@ -324,7 +324,7 @@ def plot_boxplot(
     valid_channels = [v[0] for v in valid_data]
     valid_data_arrays = [v[1] for v in valid_data]
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12, 12))
 
     bp = ax.boxplot(valid_data_arrays, labels=valid_channels, patch_artist=True)
 
@@ -424,10 +424,17 @@ def plot_correlation_heatmap(
     # Compute correlation matrix
     corr_matrix = np.corrcoef(data_matrix)
 
-    # Create heatmap
-    fig, ax = plt.subplots(figsize=(max(8, n), max(6, n * 0.8)))
+    # Create heatmap - hide upper triangle including diagonal
+    fig, ax = plt.subplots(figsize=(max(8, n * 0.9), max(6, n * 0.8)))
 
-    im = ax.imshow(corr_matrix, cmap="RdBu_r", vmin=-1, vmax=1, aspect="auto")
+    mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
+    im = ax.imshow(
+        np.where(mask, np.nan, corr_matrix),
+        cmap="RdBu_r",
+        vmin=-1,
+        vmax=1,
+        aspect="auto",
+    )
 
     # Set ticks and labels
     ax.set_xticks(range(n))
@@ -439,9 +446,9 @@ def plot_correlation_heatmap(
     cbar = plt.colorbar(im, ax=ax)
     cbar.set_label("Correlation Coefficient")
 
-    # Add text annotations
+    # Add text annotations for lower triangle including diagonal
     for i in range(n):
-        for j in range(n):
+        for j in range(i + 1):
             val = corr_matrix[i, j]
             color = "white" if abs(val) > 0.5 else "black"
             ax.text(
@@ -453,6 +460,10 @@ def plot_correlation_heatmap(
     )
     ax.set_xlabel("Signal")
     ax.set_ylabel("Signal")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_visible(False)
+    ax.spines["bottom"].set_visible(False)
 
     # Save figure
     output_path = FIGURES_DIR / f"stat_correlation_{subject_id:03d}.png"
