@@ -249,17 +249,19 @@ No quarto estágio do pipeline, aplicou-se o conjunto de técnicas de filtragem 
     \centering
     \caption{Efeitos da limpeza de sinais (Sujeito 000)}
     \label{tab:cleaning_summary}
-    \begin{tabular}{lccccc}
-        \toprule
-        \textbf{Modalidade} & \textbf{Var. Redução (\%)} & \textbf{Curtose (antes)} & \textbf{Curtose (depois)} & \textbf{SNR (dB)} & \textbf{Amostras Winsorizadas} \\
-        \midrule
-        EEG (AF7) & 99,9 & 4,60 & 3,44 & 12,36 & 7.418 \\
-        EEG (PO7) & 99,9 & 221,83 & -1,12 & -2,06 & 7.418 \\
-        ECG & 94,0 & 47055,61 & 1,30 & 6,94 & 6.488 \\
-        EMG & 99,8 & 30,23 & -0,95 & -1,26 & 6.488 \\
-        fNIRS (HbO) & 97,2 & 102,87 & 1,61 & -60,00 & 232 \\
-        \bottomrule
-    \end{tabular}
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}{lccccc}
+            \toprule
+            \textbf{\textit{Modalidade}} & \textbf{Var. Redução (\%)} & \textbf{Curtose (antes)} & \textbf{Curtose (depois)} & \textbf{SNR (dB)} & \textbf{Amostras Winsorizadas} \\
+            \midrule
+            EEG (AF7) & 99,9 & 4,60 & 3,44 & 12,36 & 7.418 \\
+            EEG (PO7) & 99,9 & 221,83 & -1,12 & -2,06 & 7.418 \\
+            ECG & 94,0 & 47055,61 & 1,30 & 6,94 & 6.488 \\
+            EMG & 99,8 & 30,23 & -0,95 & -1,26 & 6.488 \\
+            fNIRS (HbO) & 97,2 & 102,87 & 1,61 & -60,00 & 232 \\
+            \bottomrule
+        \end{tabular}
+    }
 \end{table}
 
 \subsection{Redução de Variância e Efeito de Cohen}
@@ -276,7 +278,7 @@ Identificou-se que os sinais não apresentaram lacunas significativas (gaps $> 1
 
 \subsection{Manutenção de fNIRS}
 
-Conforme planejado na discussão do Estágio 3, a modalidade fNIRS foi mantida no pipeline de limpeza apesar de apresentar SNR constante de -60 dB e efeito de tamanho negligible. A justificativa para manutenção é que a filtragem passa-banda (0,01--0,1 Hz) reduz a variância em mais de 80\% (Tabela \ref{tab:cleaning_summary}), sugerindo que mesmo um sinal ruidoso pode beneficiar-se do pré-processamento para análises de tendências lentas.
+Conforme planejado na discussão do Estágio 3, a modalidade fNIRS foi mantida no pipeline de limpeza apesar de apresentar SNR constante de -60 dB e efeito de tamanho negligible. A justificativa para manutenção é que a filtragem passa-banda (0,01--0,1 Hz) reduz a variância em mais de 97\% (Tabela \ref{tab:cleaning_summary}), sugerindo que mesmo um sinal ruidoso pode beneficiar-se do pré-processamento para análises de tendências lentas.
 
 \section{Discussão dos Achados}
 
