@@ -1,7 +1,8 @@
-- use uv 
+- use uv
 - prefer simple over clever code
-- dont repeat yourself. 
+- dont repeat yourself.
 - dont maintain dead code
 - prefer composable functions
 - KISS principle over all
 - use basedpyright and ruff
+- when modifying documents (e.g., tex files), only change existing text/formatting when content must be updated; add new content without altering the original structure or formatting of existing sections
