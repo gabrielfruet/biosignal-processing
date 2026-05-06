@@ -156,7 +156,7 @@ No quarto estágio do pipeline, implementou-se um conjunto de técnicas de pré-
 A remoção de interferência elétrica foi realizada por meio de dois filtros digitais complementares:
 
 \begin{itemize}
-    \item \textbf{Filtro Notch (50 Hz):} Elimina a interferência da rede elétrica brasileira (60 Hz para EUA, 50 Hz para Europa). Conforme observado nos dados brutos, verificou-se que o sistema Emotiv EPOC+ apresenta \textit{offset} DC elevado, sendo suscetível a interferências de 50 Hz em ambientes hospitalares.
+    \item \textbf{Filtro Notch (50 Hz):} Elimina a interferência da rede elétrica brasileira (60 Hz para EUA, 50 Hz para Europa).
     \item \textbf{Filtro Passa-Banda (Band-Pass):} Parâmetros específicos por modalidade para preservar a banda fisiológica de interesse:
     \begin{itemize}
         \item EEG: 0,5 -- 50 Hz (captura bandas delta a beta)
@@ -168,7 +168,7 @@ A remoção de interferência elétrica foi realizada por meio de dois filtros d
 
 \subsection{Interpolação de Lacunas}
 
-Gaps temporais (ausências de sinal) foram identificados e preenchidos por interpolação linear para extensão máxima de 1 segundo. Lacunas maiores foram preservadas como segmentos inválidos para posterior rejeição. Durante a implementação, identificou-se e corrigiu-se um erro de indexação na função \texttt{interpolate\_gaps()} que causava violação de limites em bordas de arrays.
+Gaps temporais (ausências de sinal) foram identificados e preenchidos por interpolação linear para extensão máxima de 1 segundo. Lacunas maiores foram preservadas como segmentos inválidos para posterior rejeição.
 
 \subsection{Winsorização}
 
