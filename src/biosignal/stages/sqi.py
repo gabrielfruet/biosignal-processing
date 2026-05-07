@@ -17,8 +17,8 @@ from scipy import signal, stats
 from scipy.signal import welch
 
 from biosignal.config import (
-    METRICS_DIR,
-    FIGURES_DIR,
+    STAGE2_METRICS_DIR,
+    STAGE2_FIGURES_DIR,
     SFREQ,
 )
 from biosignal.io.ieee import load, list_subjects, SubjectDict, ModalityDict
@@ -432,7 +432,7 @@ def plot_sqi_comparison(
     if not all_segments:
         axes[0].text(0.5, 0.5, "No segments to display", ha="center", va="center")
         axes[1].text(0.5, 0.5, "No segments to display", ha="center", va="center")
-        output_path = FIGURES_DIR / f"sqi_comparison_{subject_id:03d}_{modality}.png"
+        output_path = STAGE2_FIGURES_DIR / f"sqi_comparison_{subject_id:03d}_{modality}.png"
         plt.savefig(output_path, dpi=150, bbox_inches="tight")
         plt.close()
         return
@@ -472,7 +472,7 @@ def plot_sqi_comparison(
     ax_bad.grid(True, alpha=0.3)
     ax_bad.set_xlim(0, window_s)
 
-    output_path = FIGURES_DIR / f"sqi_comparison_{subject_id:03d}_{modality}.png"
+    output_path = STAGE2_FIGURES_DIR / f"sqi_comparison_{subject_id:03d}_{modality}.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
 
@@ -557,8 +557,8 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:
         verbose: Enable verbose output.
     """
     # Ensure output directories exist
-    METRICS_DIR.mkdir(parents=True, exist_ok=True)
-    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    STAGE2_METRICS_DIR.mkdir(parents=True, exist_ok=True)
+    STAGE2_FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
     subjects = [subject_id] if subject_id is not None else list_subjects()
 
@@ -664,13 +664,13 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:
         all_sqi_data[subj_id] = subject_sqi_data
 
         # Save per-subject metrics
-        metrics_path = METRICS_DIR / f"s{subj_id:03d}_sqi.json"
+        metrics_path = STAGE2_METRICS_DIR / f"s{subj_id:03d}_sqi.json"
         with open(metrics_path, "w") as f:
             json.dump(subject_metrics, f, indent=2)
 
     # Generate global SQI heatmap
     if all_sqi_data:
-        heatmap_path = FIGURES_DIR / "sqi_heatmap.png"
+        heatmap_path = STAGE2_FIGURES_DIR / "sqi_heatmap.png"
         plot_sqi_heatmap(all_sqi_data, heatmap_path)
 
     # Save aggregated metrics
@@ -708,11 +708,11 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:
         },
     }
 
-    metrics_path = METRICS_DIR / "sqi_metrics.json"
+    metrics_path = STAGE2_METRICS_DIR / "sqi_metrics.json"
     with open(metrics_path, "w") as f:
         json.dump(aggregate_metrics, f, indent=2)
 
     if verbose:
         print(f"\nStage 2 complete!")
-        print(f"  Metrics: {METRICS_DIR}")
-        print(f"  Figures: {FIGURES_DIR}")
+        print(f"  Metrics: {STAGE2_METRICS_DIR}")
+        print(f"  Figures: {STAGE2_FIGURES_DIR}")

@@ -178,6 +178,61 @@ A normalização de \textit{outliers} foi aplicada por Winsorização no percent
 
 Após a Winsorização, outliers residuais foram identificados por z-scores superiores a 3,0 em valor absoluto, correspondendo a aproximadamente 0,27\% de rejeição sob distribuição normal teórica.
 
+\section{Segmentação Temporal (Janelamento)}
+\label{sec:metodo_segmentacao}
+
+No quinto estágio do pipeline, implementou-se a segmentação dos sinais em janelas temporais de tamanho fixo, propagando as informações de qualidade (SQI) obtidas no Estágio 2 para garantir a integridade dos segmentos.
+
+\subsection{Definição de Janelas de Tempo}
+
+Os sinais limpos foram particionados em janelas de tempo fixas com duração de $T = 5$ segundos, selecionadas para capturar características fisiológicas estáveis enquanto mantêm resolução temporal adequada. A escolha de 5 segundos justifica-se por:
+\begin{itemize}
+    \item EEG: Captura pelo menos 2--3 ciclos completos de ondas alpha (8--12 Hz).
+    \item ECG: Captura aproximadamente 5--6 batimentos cardíacos normais.
+    \item EMG: Captura padrões de ativação muscular representativos.
+    \item fNIRS: Permite análise de variações hemodinâmicas (banda 0,01--0,1 Hz).
+\end{itemize}
+
+\subsection{Janelas com Sobreposição}
+
+Para maximizar a utilização dos dados, implementou-se suporte a janelas sobrepostas (\textit{overlapping windows}) com fração de sobreposição configurável. A taxa de sobreposição $o$ define a proporção do deslocamento entre janelas consecutivas:
+\begin{equation}
+    \text{stride} = T \times (1 - o)
+\end{equation}
+\subsection{Critérios de Estabilidade Intra-Janela}
+
+Cada segmento foi submetido a testes de estacionariedade e homogeneidade para garantir a validade fisiológica:
+
+\begin{itemize}
+    \item \textbf{Coeeficiente de Variação (CV):} Garantiu-se que o CV da janela seja inferior a 30\%, indicando estabilidade de amplitude.
+    \item \textbf{Teste de Dickey-Fuller Aumentado (ADF):} Avaliou-se a estacionariedade estatística do segmento, rejeitando janelas não-estacionárias.
+\end{itemize}
+
+\subsection{Propagação de Rejeição via SQI}
+
+As informações de qualidade calculadas no Estágio 2 foram propagadas para o janelamento:
+\begin{itemize}
+    \item Segmentos rejeitados no SQI (Loose Electrode, Movement Artifact, SNR baixo) foram marcados como inválidos.
+    \item Segmentos parcialmente válidos tiveram suas máscaras de rejeição armazenadas para exclusão em análises subsequentes.
+\end{itemize}
+
+\subsection{Métricas de Análise Inter-Janelas}
+
+Para caracterizar a variabilidade entre segmentos de um mesmo sujeito, calculou-se:
+\begin{itemize}
+    \item \textbf{Variância Inter-Janelas:} Medida da dispersão de descritores estatísticos entre segmentos consecutivos.
+    \item \textbf{Correlação Cruzada:} Análise de similaridade morfológica entre janelas adjacentes.
+\end{itemize}
+
+\subsection{Cache de Segmentos}
+
+Os segmentos válidos foram armazenados em arquivos \texttt{.npz} (NumPy compressed archive) para uso eficiente nos estágios subsequentes de extração de atributos. Cada arquivo contém:
+\begin{itemize}
+    \item Sinais de todas as modalidades para o sujeito.
+    \item Vetores de máscara indicando amostras válidas/inválidas.
+    \item Metadados: timestamps, durações, limiares utilizados.
+\end{itemize}
+
 \section{Estrutura do Pipeline de Processamento}
 
-O pipeline projetado compreende dez estágios sequenciais. O estágio inicial corresponde à aquisição e validação de dados brutos. O segundo estágio contempla o cálculo de índices de qualidade (SQI) para a rejeição de segmentos. O terceiro estágio executa análises estatísticas e testes de hipótese. O quarto estágio aplica técnicas de filtragem e correção de artefatos. O quinto estágio realiza a segmentação temporal dos sinais em janelas. O sexto estágio executa a extração de atributos nos domínios do tempo e da frequência. O sétimo estágio realiza a engenharia de novos atributos. O oitavo estágio aplica redução de dimensionalidade por componentes principais. O nono estágio executa a seleção de variáveis informativas. O décimo estágio valida estatisticamente o conjunto final. Este relatório concentra-se na execução dos quatro primeiros estágios do projeto.
+O pipeline projetado compreende dez estágios sequenciais. O estágio inicial corresponde à aquisição e validação de dados brutos. O segundo estágio contempla o cálculo de índices de qualidade (SQI) para a rejeição de segmentos. O terceiro estágio executa análises estatísticas e testes de hipótese. O quarto estágio aplica técnicas de filtragem e correção de artefatos. O quinto estágio realiza a segmentação temporal dos sinais em janelas. O sexto estágio executa a extração de atributos nos domínios do tempo e da frequência. O sétimo estágio realiza a engenharia de novos atributos. O oitavo estágio aplica redução de dimensionalidade por componentes principais. O nono estágio executa a seleção de variáveis informativas. O décimo estágio valida estatisticamente o conjunto final. Este relatório concentra-se na execução dos cinco primeiros estágios do projeto.
