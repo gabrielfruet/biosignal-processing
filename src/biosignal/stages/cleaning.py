@@ -15,9 +15,9 @@ from scipy import signal, stats
 from scipy.signal import butter, filtfilt, iirnotch
 
 from biosignal.config import (
-    METRICS_DIR,
-    FIGURES_DIR,
-    DATA_OUT_DIR,
+    STAGE4_METRICS_DIR,
+    STAGE4_FIGURES_DIR,
+    STAGE4_DATA_DIR,
     SFREQ,
     CHANNELS,
 )
@@ -561,7 +561,7 @@ def plot_before_after(
 
     axes[-1].set_xlabel("Time (s)")
 
-    output_path = FIGURES_DIR / f"cleaning_comparison_{subject_id:03d}_{modality}.png"
+    output_path = STAGE4_FIGURES_DIR / f"cleaning_comparison_{subject_id:03d}_{modality}.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
 
@@ -608,7 +608,7 @@ def plot_spectrum_comparison(
         ax.grid(True, alpha=0.3)
         ax.legend(loc="upper right", fontsize=8)
 
-    output_path = FIGURES_DIR / f"cleaning_spectrum_{subject_id:03d}_{modality}.png"
+    output_path = STAGE4_FIGURES_DIR / f"cleaning_spectrum_{subject_id:03d}_{modality}.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
 
@@ -652,7 +652,7 @@ def plot_dist_comparison(
         ax.grid(True, alpha=0.3)
         ax.legend(loc="upper right", fontsize=8)
 
-    output_path = FIGURES_DIR / f"cleaning_dist_{subject_id:03d}_{modality}.png"
+    output_path = STAGE4_FIGURES_DIR / f"cleaning_dist_{subject_id:03d}_{modality}.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
 
@@ -666,9 +666,9 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:
     """
     from biosignal.io.ieee import load, list_subjects, ModalityDict
 
-    METRICS_DIR.mkdir(parents=True, exist_ok=True)
-    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-    DATA_OUT_DIR.mkdir(parents=True, exist_ok=True)
+    STAGE4_METRICS_DIR.mkdir(parents=True, exist_ok=True)
+    STAGE4_FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    STAGE4_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     subjects = [subject_id] if subject_id is not None else list_subjects()
 
@@ -721,21 +721,22 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:
 
         all_metrics["subjects"][str(subj_id)] = subject_metrics
 
-        subject_metrics_path = METRICS_DIR / f"s{subj_id:03d}_cleaning.json"
+        subject_metrics_path = STAGE4_METRICS_DIR / f"s{subj_id:03d}_cleaning.json"
         with open(subject_metrics_path, "w") as f:
             json.dump(subject_metrics, f, indent=2)
 
     global_summary = _compile_global_summary(all_metrics)
     all_metrics["global_summary"] = global_summary
 
-    metrics_path = METRICS_DIR / "cleaning_validation.json"
+    metrics_path = STAGE4_METRICS_DIR / "cleaning_validation.json"
     with open(metrics_path, "w") as f:
         json.dump(all_metrics, f, indent=2)
 
     if verbose:
         print(f"\nStage 4 complete!")
         print(f"  Subjects processed: {len(subjects)}")
-        print(f"  Metrics: {METRICS_DIR}")
+        print(f"  Metrics: {STAGE4_METRICS_DIR}")
+        print(f"  Figures: {STAGE4_FIGURES_DIR}")
 
 
 def _compile_global_summary(all_metrics: dict) -> dict:

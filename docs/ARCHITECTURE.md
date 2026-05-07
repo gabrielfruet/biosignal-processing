@@ -14,19 +14,22 @@ biosignal_processing/
 │       │   └── ieee.py          # IEEE dataset loader
 │       └── stages/
 │           ├── __init__.py
-│           ├── 01_acquisition.py
-│           ├── 02_sqi.py
-│           ├── 03_statistics.py
-│           ├── 04_cleaning.py
-│           ├── 05_segmentation.py
-│           ├── 06_features.py
-│           ├── 07_engineering.py
-│           ├── 08_dimreduction.py
-│           ├── 09_selection.py
-│           └── 10_validation.py
+│           ├── acquisition.py   # Stage 1
+│           ├── sqi.py           # Stage 2
+│           ├── statistics.py    # Stage 3
+│           ├── cleaning.py      # Stage 4
+│           ├── segmentation.py  # Stage 5
+│           ├── features.py      # Stage 6
+│           ├── engineering.py   # Stage 7
+│           ├── dimreduction.py  # Stage 8
+│           ├── selection.py     # Stage 9
+│           └── validation.py    # Stage 10
 ├── output/
-│   ├── metrics/
-│   ├── figures/
+│   ├── stage1_acquisition/
+│   ├── stage2_sqi/
+│   ├── stage3_statistics/
+│   ├── stage4_cleaning/
+│   ├── stage5_segmentation/
 │   └── data/
 └── docs/
 ```
@@ -137,10 +140,10 @@ def info(subject: Optional[int] = None):
 Each stage follows the same pattern:
 
 ```python
-# src/biosignal/stages/02_sqi.py
+# src/biosignal/stages/sqi.py
 """Stage 2: Signal Quality Index."""
 import json
-from ..config import METRICS_DIR, FIGURES_DIR
+from ..config import STAGE2_METRICS_DIR, STAGE2_FIGURES_DIR
 
 def run(subject_id: int | None = None, verbose: bool = False):
     """Execute SQI stage.
@@ -151,33 +154,60 @@ def run(subject_id: int | None = None, verbose: bool = False):
     """
     print("  [2/10] Running SQI...")
     # ... logic ...
-    # Save metrics to METRICS_DIR / "sqi_metrics.json"
-    # Save figures to FIGURES_DIR / "sqi_analysis.png"
+    # Save metrics to STAGE2_METRICS_DIR / "sqi_metrics.json"
+    # Save figures to STAGE2_FIGURES_DIR / "sqi_heatmap.png"
 ```
 
 ## Output Structure
 
+Each stage has its own folder in `output/` with organized metrics, figures, and data:
+
 ```
 output/
-├── metrics/
-│   ├── acquisition_summary.json
-│   ├── s{000-015}_acquisition.json
-│   ├── sqi_metrics.json
-│   ├── statistics.json
-│   ├── cleaning_validation.json
-│   ├── segmentation_metrics.json
-│   ├── pca_results.json
-│   ├── feature_ranking.json
-│   └── final_validation.json
-├── figures/
-│   ├── s{000-015}_raw_signals.png
-│   ├── overview_all_subjects.png
-│   ├── sqi_analysis.png
-│   ├── histogram.png
-│   ├── boxplot.png
-│   └── ...
-└── data/
-    ├── acquisition_metadata.json
+├── stage1_acquisition/
+│   ├── metrics/
+│   │   ├── acquisition_summary.json
+│   │   └── s{000-015}_acquisition.json
+│   └── figures/
+│       ├── s{000-015}_raw_signals.png
+│       └── overview_all_subjects.png
+├── stage2_sqi/
+│   ├── metrics/
+│   │   ├── sqi_metrics.json
+│   │   └── s{000-015}_sqi.json
+│   └── figures/
+│       ├── sqi_comparison_*.png
+│       └── sqi_heatmap.png
+├── stage3_statistics/
+│   ├── metrics/
+│   │   ├── statistics.json
+│   │   └── s{000-015}_statistics.json
+│   └── figures/
+│       ├── stat_histogram_*.png
+│       ├── stat_boxplot_*.png
+│       ├── stat_qq_*.png
+│       └── stat_correlation_*.png
+├── stage4_cleaning/
+│   ├── metrics/
+│   │   ├── cleaning_validation.json
+│   │   └── s{000-015}_cleaning.json
+│   ├── data/
+│   └── figures/
+│       ├── cleaning_comparison_*.png
+│       ├── cleaning_spectrum_*.png
+│       └── cleaning_dist_*.png
+├── stage5_segmentation/
+│   ├── metrics/
+│   │   ├── segmentation_metrics.json
+│   │   └── s{000-015}_segmentation.json
+│   ├── data/
+│   │   └── segments/
+│   │       └── s{000-015}_{mod}_segments.npz
+│   └── figures/
+│       ├── segmentation_windows_*.png
+│       ├── window_stability_*.png
+│       └── inter_window_variance_*.png
+└── data/                    # Shared output data
     ├── features.csv
     ├── features_engineered.csv
     └── dataset_final.csv
@@ -187,11 +217,11 @@ output/
 
 | # | Stage | Command | Output |
 |---|-------|---------|--------|
-| 1 | Acquisition | `run 1` | Raw signals, metadata |
-| 2 | SQI | `run 2` | `metrics/sqi_metrics.json` |
-| 3 | Statistics | `run 3` | `metrics/statistics.json` |
-| 4 | Cleaning | `run 4` | `metrics/cleaning_validation.json` |
-| 5 | Segmentation | `run 5` | `metrics/segmentation_metrics.json` |
+| 1 | Acquisition | `run 1` | `stage1_acquisition/` |
+| 2 | SQI | `run 2` | `stage2_sqi/` |
+| 3 | Statistics | `run 3` | `stage3_statistics/` |
+| 4 | Cleaning | `run 4` | `stage4_cleaning/` |
+| 5 | Segmentation | `run 5` | `stage5_segmentation/` |
 | 6 | Features | `run 6` | `data/features.csv` |
 | 7 | Engineering | `run 7` | `data/features_engineered.csv` |
 | 8 | Dimensionality Reduction | `run 8` | `metrics/pca_results.json` |
@@ -224,11 +254,13 @@ raw = ieee.load_raw(0, "eeg")
 Centralized in `src/biosignal/config.py`:
 
 ```python
+# Stage-specific directories
+STAGE1_METRICS_DIR = OUTPUT_DIR / "stage1_acquisition" / "metrics"
+STAGE1_FIGURES_DIR = OUTPUT_DIR / "stage1_acquisition" / "figures"
+STAGE2_METRICS_DIR = OUTPUT_DIR / "stage2_sqi" / "metrics"
+STAGE2_FIGURES_DIR = OUTPUT_DIR / "stage2_sqi" / "figures"
+# ... etc for all stages
+
 # Sampling frequencies
 SFREQ = {"eeg": 512, "ecg": 250, "emg": 250, "fnirs": 16}
-
-# Output directories
-METRICS_DIR = OUTPUT_DIR / "metrics"
-FIGURES_DIR = OUTPUT_DIR / "figures"
-DATA_OUT_DIR = OUTPUT_DIR / "data"
 ```

@@ -68,14 +68,14 @@ A visualização dos sinais brutos para o sujeito 000, abrangendo as quatro moda
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth]{../output/figures/s000_raw_signals.png}
+    \includegraphics[width=0.95\textwidth]{../output/stage1_acquisition/figures/s000_raw_signals.png}
     \caption{Visualização dos biossinais brutos para o sujeito 000: canais de EEG, ECG, EMG e fNIRS.}
     \label{fig:sinais_brutos_s000}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth]{../output/figures/overview_all_subjects.png}
+    \includegraphics[width=0.95\textwidth]{../output/stage1_acquisition/figures/overview_all_subjects.png}
     \caption{Panorama comparativo dos sinais de EEG (canal frontal AF7) para os 16 sujeitos do dataset.}
     \label{fig:visao_geral}
 \end{figure}
@@ -134,7 +134,7 @@ A Figura \ref{fig:sqi_comparison} ilustra a diferenciação automática entre se
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth]{../output/figures/sqi_comparison_000_eeg.png}
+    \includegraphics[width=0.95\textwidth]{../output/stage2_sqi/figures/sqi_comparison_000_eeg.png}
     \caption{Avaliação de qualidade (SQI) para EEG: comparação entre segmento aceito e segmento rejeitado por alta curtose (instrumental).}
     \label{fig:sqi_comparison}
 \end{figure}
@@ -189,7 +189,7 @@ O teste de Shapiro-Wilk revelou que 100\% (192/192) dos canais analisados em tod
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.85\textwidth]{../output/figures/stat_histogram_000_eeg_AF7.png}
+    \includegraphics[width=0.85\textwidth]{../output/stage3_statistics/figures/stat_histogram_000_eeg_AF7.png}
     \caption{Histograma de amplitudes do canal EEG-AF7 (Sujeito 000) com sobreposição de curva normal teórica.}
     \label{fig:histograma_eeg}
 \end{figure}
@@ -200,14 +200,14 @@ Para avaliar visualmente o desvio da normalidade e a dispersão entre canais, a 
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../output/figures/stat_qq_000_eeg_AF7.png}
+        \includegraphics[width=\textwidth]{../output/stage3_statistics/figures/stat_qq_000_eeg_AF7.png}
         \caption{Gráfico Q-Q (AF7)}
         \label{fig:qq_eeg}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../output/figures/stat_boxplot_000_eeg.png}
+        \includegraphics[width=\textwidth]{../output/stage3_statistics/figures/stat_boxplot_000_eeg.png}
         \caption{Boxplot por Canal}
         \label{fig:boxplot_eeg}
     \end{subfigure}
@@ -223,7 +223,7 @@ A matriz de correlação cruzada, apresentada na Figura \ref{fig:heatmap_correla
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.9\textwidth]{../output/figures/stat_correlation_000.png}
+    \includegraphics[width=0.9\textwidth]{../output/stage3_statistics/figures/stat_correlation_000.png}
     \caption{Matriz de correlação cruzada entre canais e modalidades para o Sujeito 000.}
     \label{fig:heatmap_correlacao}
 \end{figure}
@@ -232,7 +232,7 @@ Para avaliar a estabilidade das correlações em nível populacional, a Figura \
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.9\textwidth]{../output/figures/stat_correlation_999.png}
+    \includegraphics[width=0.9\textwidth]{../output/stage3_statistics/figures/stat_correlation_999.png}
     \caption{Matriz de correlação global agregada para todos os sujeitos do dataset.}
     \label{fig:heatmap_global}
 \end{figure}
@@ -279,6 +279,149 @@ Identificou-se que os sinais não apresentaram lacunas significativas (gaps $> 1
 Conforme planejado na discussão do Estágio 3, a modalidade fNIRS foi mantida no pipeline de limpeza apesar de apresentar SNR constante de -60 dB e efeito de tamanho negligível. A justificativa para manutenção é que a filtragem passa-banda (0,01--0,1 Hz) reduz a variância em mais de 97\% (Tabela \ref{tab:cleaning_summary}), sugerindo que mesmo um sinal ruidoso pode beneficiar-se do pré-processamento para análises de tendências lentas.
 
 Esta análise foi conduzida como prova de conceito metodológico, demonstrando a eficácia dos filtros mesmo em sinais de baixa qualidade. No entanto, para as fases subsequentes de extração de atributos e classificação (Estágios 6--10), o fNIRS será excluído do pipeline devido à sua taxa de rejeição superior a 95\%.
+
+\section{Segmentação Temporal dos Sinais}
+\label{sec:resultados_segmentacao}
+
+No quinto estágio do pipeline, executou-se a segmentação temporal dos sinais limpos em janelas de 5 segundos com 50\% de sobreposição. A Tabela \ref{tab:segmentacao_summary} apresenta o consolidado da segmentação por modalidade.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Sumário da segmentação temporal por modalidade}
+    \label{tab:segmentacao_summary}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Modalidade} & \textbf{Janelas Totais} & \textbf{Janelas Válidas} & \textbf{Taxa de Retenção} \\
+        \midrule
+        EEG (8 canais) & 329 & 309 & $93{,}9\%$ \\
+        ECG & 334 & 216 & $64{,}7\%$ \\
+        EMG & 334 & 147 & $44{,}0\%$ \\
+        fNIRS & 314 & 8 & $2{,}5\%$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Análise de Estabilidade Intra-Janela}
+
+O teste de estacionariedade ADF e o coeficiente de variação (CV) foram aplicados a cada segmento para validar sua qualidade fisiológica. A Figura \ref{fig:window_stability} ilustra a distribuição dos valores de CV por modalidade para o EEG.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../output/stage5_segmentation/figures/window_stability_000_eeg.png}
+    \caption{Distribuição do coeficiente de variação (CV) para EEG (Sujeito 000).}
+    \label{fig:window_stability}
+\end{figure}
+
+A Tabela \ref{tab:segmentacao_metrics} apresenta as métricas de estabilidade consolidadas para o sujeito 000, demonstrando que o EEG apresenta excelente uniformidade entre janelas (CV médio de 0,41\%), enquanto o ECG apresenta maior variabilidade de amplitude (CV médio de 45,9\%). A estacionariedade ADF indica que o ECG é fortemente estacionário (100\%) devido à periodicidade cardíaca, enquanto o EEG é predominantemente não-estacionário (0\%), coerente com a natureza dinâmica dos potenciais corticais.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Métricas de estabilidade intra-janela (Sujeito 000)}
+    \label{tab:segmentacao_metrics}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Modalidade} & \textbf{CV Médio (\%)} & \textbf{CV Máx (\%)} & \textbf{ADF Estacionário (\%)} \\
+        \midrule
+        EEG & $0{,}41$ & $3{,}21$ & $0{,}0$ \\
+        ECG & $45{,}91$ & $73{,}45$ & $100{,}0$ \\
+        EMG & $0{,}29$ & $0{,}53$ & $37{,}5$ \\
+        fNIRS & $2045{,}44$ & $6067{,}80$ & $100{,}0$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Variância Inter-Janelas}
+
+A análise de variância entre segmentos consecutivos revelou que o EEG apresenta menor variabilidade inter-janelas (indicando segmentos temporalmente consistentes), enquanto o EMG apresenta maior dispersão, refletindo a natureza descontínua da atividade muscular. A Figura \ref{fig:inter_window} apresenta a análise comparativa para EEG.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../output/stage5_segmentation/figures/inter_window_variance_000_eeg.png}
+    \caption{Variância inter-janelas para EEG (Sujeito 000).}
+    \label{fig:inter_window}
+\end{figure}
+
+\subsection{Propagação de Máscaras de Qualidade}
+
+As máscaras de rejeição geradas no Estágio 2 foram propagadas para o janelamento, resultando nas taxas de rejeição apresentadas na Tabela \ref{tab:segmentacao_summary}. Observou-se que:
+
+\begin{itemize}
+    \item \textbf{EEG:} 20 janelas rejeitadas (6,1\%), principalmente por artefatos de piscada ocular e artefatos de movimento.
+    \item \textbf{ECG:} 118 janelas rejeitadas (35,3\%), principalmente por baixa SNR e variabilidade excessiva.
+    \item \textbf{EMG:} 187 janelas rejeitadas (56,0\%), indicando instabilidade na interface sensor-pele durante o protocolo de indução emocional.
+    \item \textbf{fNIRS:} 306 janelas rejeitadas (97,5\%), confirmando a exclusão desta modalidade do pipeline.
+\end{itemize}
+
+\subsection{Visualização das Janelas}
+
+A Figura \ref{fig:segmentation_windows} apresenta a representação visual das janelas segmentadas para o sujeito 000 (EEG), demonstrando a aplicação correta do janelamento com sobreposição.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../output/stage5_segmentation/figures/segmentation_windows_000_eeg.png}
+    \caption{Segmentação temporal com janelas de 5s e 50\% de sobreposição para EEG (Sujeito 000).}
+    \label{fig:segmentation_windows}
+\end{figure}
+
+\subsection{Cache de Segmentos Gerados}
+
+Ao final do estágio, foram gerados 64 arquivos \texttt{.npz} (4 modalidades × 16 sujeitos) contendo os segmentos válidos. Cada arquivo preserva:
+\begin{itemize}
+    \item Sinais particionados com metadados temporais.
+    \item Máscaras de qualidade propagadas do SQI.
+    \item Métricas de estabilidade por janela.
+\end{itemize}
+
+Estes arquivos constituem a entrada para o Estágio 6 de extração de atributos, otimizando o tempo de processamento ao evitar reprocessamento de sinais brutos.
+
+\subsection{Análise Inter-Sujeitos e Padrões Observados}
+
+A análise da variabilidade entre os 16 sujeitos revelou padrões distintos por modalidade, conforme apresentado na Tabela \ref{tab:subjects_segmentacao}. As observações mais importantes revelam também particularidades de cada sujeito para com os sinais coletados, além de análise inter-modalidades e inter-janelas.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Retenção de janelas por sujeito e modalidade}
+    \label{tab:subjects_segmentacao}
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}{lcccccccc}
+            \toprule
+            \textbf{Sujeito} & \textbf{EEG Total} & \textbf{EEG Válidas} & \textbf{ECG Total} & \textbf{ECG Válidas} & \textbf{EMG Total} & \textbf{EMG Válidas} & \textbf{fNIRS Total} & \textbf{fNIRS Válidas} \\
+            \midrule
+            s000 & 28 & 23 (82\%) & 51 & 16 (31\%) & 51 & 24 (47\%) & 28 & 4 (14\%) \\
+            s001 & 23 & 22 (96\%) & 20 & 17 (85\%) & 20 & 7 (35\%) & 23 & 2 (9\%) \\
+            s002 & 15 & 14 (93\%) & 15 & 14 (93\%) & 15 & 0 (0\%) & 15 & 0 (0\%) \\
+            s003 & 16 & 15 (94\%) & 16 & 2 (12\%) & 16 & 13 (81\%) & 16 & 0 (0\%) \\
+            s004 & 20 & 19 (95\%) & 16 & 4 (25\%) & 16 & 10 (62\%) & 20 & 0 (0\%) \\
+            s005 & 21 & 20 (95\%) & 18 & 17 (94\%) & 18 & 17 (94\%) & 21 & 0 (0\%) \\
+            s006 & 20 & 19 (95\%) & 19 & 2 (11\%) & 19 & 8 (42\%) & 20 & 1 (5\%) \\
+            s007 & 16 & 15 (94\%) & 17 & 9 (53\%) & 17 & 2 (12\%) & 16 & 0 (0\%) \\
+            s008 & 19 & 18 (95\%) & 20 & 19 (95\%) & 20 & 8 (40\%) & 19 & 0 (0\%) \\
+            s009 & 20 & 19 (95\%) & 20 & 19 (95\%) & 20 & 3 (15\%) & 20 & 0 (0\%) \\
+            s010 & 14 & 13 (93\%) & 15 & 14 (93\%) & 15 & 4 (27\%) & 14 & 0 (0\%) \\
+            s011 & 24 & 23 (96\%) & 24 & 23 (96\%) & 24 & 21 (88\%) & 24 & 0 (0\%) \\
+            s012 & 23 & 22 (96\%) & 24 & 23 (96\%) & 24 & 10 (42\%) & 23 & 1 (4\%) \\
+            s013 & 26 & 25 (96\%) & 20 & 0 (0\%) & 20 & 10 (50\%) & 26 & 0 (0\%) \\
+            s014 & 25 & 24 (96\%) & 23 & 22 (96\%) & 23 & 10 (43\%) & 25 & 0 (0\%) \\
+            s015 & 19 & 18 (95\%) & 16 & 15 (94\%) & 16 & 0 (0\%) & 4 & 0 (0\%) \\
+            \bottomrule
+        \end{tabular}
+    }
+\end{table}
+
+
+\begin{enumerate}
+    \item \textbf{EEG:} A taxa de retenção foi consistentemente alta (82--96\%), com média de 93,9\%. O sujeito s000 apresentou a menor taxa (82\%), possivelmente devido a artefatos de movimento prolongados durante o protocolo. Os coeficientes de variação (CV) foram extremamente baixos (média de 0,41\% para s000), indicando estabilidade temporal excepcional do sinal EEG.
+
+    \item \textbf{ECG:} Observou-se alta variabilidade inter-sujeitos. Quatro sujeitos (s003, s004, s006, s013) apresentaram taxa de rejeição superior a 70\%, sugerindo problemas crônicos de contato sensor ou arritmias cardíacas. Em contraste, seis sujeitos (s001, s002, s005, s008, s009, s011) alcançaram retenção superior a 85\%. O teste ADF indicou que 97,7\% das janelas de ECG são estacionárias, coerente com a periodicidade cardíaca quase-determinística.
+
+    \item \textbf{EMG:} Dois sujeitos (s002, s015) apresentaram 0\% de janelas utilizáveis, indicando falhas completas na aquisição. A taxa média de estacionariedade ADF foi baixa (14,3\%), refletindo a natureza descontínua e não-estacionária da atividade eletromiográfica durante a indução emocional.
+
+    \item \textbf{fNIRS:} Confirmou-se a exclusão de fNIRS para todos os sujeitos, com apenas 8 janelas válidas (2,5\%) no dataset completo. Os valores de CV foram extremos (média de 2045\%), indicando variabilidade não-fisiológica nos dados.
+
+    \item \textbf{Correlação Inter-Modalidades:} A correlação de Pearson entre as taxas de retenção de diferentes modalidades foi fraca (EEG-ECG: $r = 0{,}24$; ECG-EMG: $r = -0{,}25$), indicando que sujeitos com boa qualidade de EEG não necessariamente apresentam boa qualidade de ECG ou EMG. Isto sugere que as fontes de artefato são específicas por modalidade e não correlacionadas com o estado geral do participante.
+
+    \item \textbf{Variância Inter-Janelas:} O ECG apresentou maior variância entre janelas consecutivas ($\sigma^2 = 0{,}012$) em comparação com EEG ($\sigma^2 = 0{,}003$) e EMG ($\sigma^2 = 0{,}0004$), refletindo a maior dinâmica temporal do sinal cardíaco.
+\end{enumerate}
 
 \section{Discussão dos Achados}
 

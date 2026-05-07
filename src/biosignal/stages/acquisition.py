@@ -14,8 +14,8 @@ import numpy as np
 
 from biosignal.config import (
     OUTPUT_DIR,
-    METRICS_DIR,
-    FIGURES_DIR,
+    STAGE1_METRICS_DIR,
+    STAGE1_FIGURES_DIR,
     DATA_OUT_DIR,
     SFREQ,
     CHANNELS,
@@ -308,7 +308,7 @@ def plot_raw_signals(
         )
         ax_fnirs.set_xlabel("Time (s)")
 
-    output_path = FIGURES_DIR / f"s{subject_id:03d}_raw_signals.png"
+    output_path = STAGE1_FIGURES_DIR / f"s{subject_id:03d}_raw_signals.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
 
@@ -380,7 +380,7 @@ def plot_overview(
     for ax in axes[:, 0]:
         ax.set_ylabel("μV", fontsize=8)
 
-    output_path = FIGURES_DIR / "overview_all_subjects.png"
+    output_path = STAGE1_FIGURES_DIR / "overview_all_subjects.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
 
@@ -393,8 +393,8 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:  # noqa: 
         verbose: Enable verbose output.
     """
     # Ensure output directories exist
-    METRICS_DIR.mkdir(parents=True, exist_ok=True)
-    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    STAGE1_METRICS_DIR.mkdir(parents=True, exist_ok=True)
+    STAGE1_FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     DATA_OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     subjects = [subject_id] if subject_id is not None else list_subjects()
@@ -449,7 +449,7 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:  # noqa: 
             "subject_id": subj_id,
             "modalities": problems,
         }
-        metrics_path = METRICS_DIR / f"s{subj_id:03d}_acquisition.json"
+        metrics_path = STAGE1_METRICS_DIR / f"s{subj_id:03d}_acquisition.json"
         with open(metrics_path, "w") as f:
             json.dump(metrics, f, indent=2)
 
@@ -504,12 +504,12 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:  # noqa: 
         "subjects_with_problems": subjects_with_problems,
         "problem_summary": problem_summary,
     }
-    summary_path = METRICS_DIR / "acquisition_summary.json"
+    summary_path = STAGE1_METRICS_DIR / "acquisition_summary.json"
     with open(summary_path, "w") as f:
         json.dump(summary, f, indent=2)
 
     if verbose:
         print(f"\nStage 1 complete!")
-        print(f"  Metrics: {METRICS_DIR}")
-        print(f"  Figures: {FIGURES_DIR}")
+        print(f"  Metrics: {STAGE1_METRICS_DIR}")
+        print(f"  Figures: {STAGE1_FIGURES_DIR}")
         print(f"  Metadata: {metadata_path}")

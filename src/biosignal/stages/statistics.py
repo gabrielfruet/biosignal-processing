@@ -18,8 +18,8 @@ import numpy as np
 from scipy import stats
 
 from biosignal.config import (
-    METRICS_DIR,
-    FIGURES_DIR,
+    STAGE3_METRICS_DIR,
+    STAGE3_FIGURES_DIR,
     SFREQ,
     CHANNELS,
 )
@@ -289,7 +289,7 @@ def plot_histogram(
 
     # Save figure
     output_path = (
-        FIGURES_DIR / f"stat_histogram_{subject_id:03d}_{modality}_{channel}.png"
+        STAGE3_FIGURES_DIR / f"stat_histogram_{subject_id:03d}_{modality}_{channel}.png"
     )
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
@@ -343,7 +343,7 @@ def plot_boxplot(
     plt.xticks(rotation=45)
 
     # Save figure
-    output_path = FIGURES_DIR / f"stat_boxplot_{subject_id:03d}_{modality}.png"
+    output_path = STAGE3_FIGURES_DIR / f"stat_boxplot_{subject_id:03d}_{modality}.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
 
@@ -378,7 +378,7 @@ def plot_qq(
     ax.grid(True, alpha=0.3)
 
     # Save figure
-    output_path = FIGURES_DIR / f"stat_qq_{subject_id:03d}_{modality}_{channel}.png"
+    output_path = STAGE3_FIGURES_DIR / f"stat_qq_{subject_id:03d}_{modality}_{channel}.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
 
@@ -466,7 +466,7 @@ def plot_correlation_heatmap(
     ax.spines["bottom"].set_visible(False)
 
     # Save figure
-    output_path = FIGURES_DIR / f"stat_correlation_{subject_id:03d}.png"
+    output_path = STAGE3_FIGURES_DIR / f"stat_correlation_{subject_id:03d}.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
 
@@ -647,8 +647,8 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:  # noqa: 
         verbose: Enable verbose output.
     """
     # Ensure output directories exist
-    METRICS_DIR.mkdir(parents=True, exist_ok=True)
-    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    STAGE3_METRICS_DIR.mkdir(parents=True, exist_ok=True)
+    STAGE3_FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
     subjects = [subject_id] if subject_id is not None else list_subjects()
 
@@ -702,7 +702,7 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:  # noqa: 
             plot_correlation_heatmap(correlation_data, subj_id)
 
         # Save per-subject statistics
-        subject_metrics_path = METRICS_DIR / f"s{subj_id:03d}_statistics.json"
+        subject_metrics_path = STAGE3_METRICS_DIR / f"s{subj_id:03d}_statistics.json"
         with open(subject_metrics_path, "w") as f:
             json.dump(subject_results, f, indent=2)
 
@@ -725,7 +725,7 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:  # noqa: 
         },
     }
 
-    metrics_path = METRICS_DIR / "statistics.json"
+    metrics_path = STAGE3_METRICS_DIR / "statistics.json"
     with open(metrics_path, "w") as f:
         json.dump(aggregate_metrics, f, indent=2)
 
@@ -734,5 +734,5 @@ def run(subject_id: int | None = None, verbose: bool = False) -> None:  # noqa: 
         print(f"  Subjects analyzed: {len(all_subject_results)}")
         print(f"  Normality: {normality_summary}")
         print(f"  Homoscedasticity: {homoscedasticity_summary}")
-        print(f"  Metrics: {METRICS_DIR}")
-        print(f"  Figures: {FIGURES_DIR}")
+        print(f"  Metrics: {STAGE3_METRICS_DIR}")
+        print(f"  Figures: {STAGE3_FIGURES_DIR}")

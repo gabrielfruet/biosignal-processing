@@ -6,9 +6,38 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 DATA_DIR = PROJECT_ROOT / "data" / "ieee-multimodal-extracted"
 OUTPUT_DIR = PROJECT_ROOT / "output"
-METRICS_DIR = OUTPUT_DIR / "metrics"
-FIGURES_DIR = OUTPUT_DIR / "figures"
+
+# Stage-specific directories
+METRICS_DIR = OUTPUT_DIR / "metrics"  # Legacy, still used for global metrics
+FIGURES_DIR = OUTPUT_DIR / "figures"  # Legacy, still used for global figures
 DATA_OUT_DIR = OUTPUT_DIR / "data"
+
+# Stage 1: Acquisition
+STAGE1_DIR = OUTPUT_DIR / "stage1_acquisition"
+STAGE1_METRICS_DIR = STAGE1_DIR / "metrics"
+STAGE1_FIGURES_DIR = STAGE1_DIR / "figures"
+
+# Stage 2: SQI
+STAGE2_DIR = OUTPUT_DIR / "stage2_sqi"
+STAGE2_METRICS_DIR = STAGE2_DIR / "metrics"
+STAGE2_FIGURES_DIR = STAGE2_DIR / "figures"
+
+# Stage 3: Statistics
+STAGE3_DIR = OUTPUT_DIR / "stage3_statistics"
+STAGE3_METRICS_DIR = STAGE3_DIR / "metrics"
+STAGE3_FIGURES_DIR = STAGE3_DIR / "figures"
+
+# Stage 4: Cleaning
+STAGE4_DIR = OUTPUT_DIR / "stage4_cleaning"
+STAGE4_METRICS_DIR = STAGE4_DIR / "metrics"
+STAGE4_FIGURES_DIR = STAGE4_DIR / "figures"
+STAGE4_DATA_DIR = STAGE4_DIR / "data"
+
+# Stage 5: Segmentation
+STAGE5_DIR = OUTPUT_DIR / "stage5_segmentation"
+STAGE5_METRICS_DIR = STAGE5_DIR / "metrics"
+STAGE5_FIGURES_DIR = STAGE5_DIR / "figures"
+STAGE5_DATA_DIR = STAGE5_DIR / "data" / "segments"
 
 # Sampling frequencies (Hz)
 SFREQ = {
@@ -32,4 +61,24 @@ NYQUIST_MAX_FREQ = {
     "ecg": 40,  # QRS complex < 40 Hz
     "emg": 100,  # EMG typically < 100 Hz
     "fnirs": 2,  # fNIRS hemodynamics < 0.5 Hz (use 2 for safety)
+}
+
+# Segmentation configuration
+SEGMENTATION_CONFIG = {
+    "window_sizes": {
+        "eeg": {"fixed_1s": 512, "fixed_5s": 2560},
+        "ecg": {"fixed_1s": 250, "fixed_5s": 1250},
+        "emg": {"fixed_1s": 250, "fixed_5s": 1250},
+        "fnirs": {"fixed_1s": 16, "fixed_5s": 80},
+    },
+    "overlap_options": [0.0, 0.25, 0.5],
+    "default_window": 5,  # seconds
+    "stability_threshold_cv": 0.30,  # CV < 30% = stable
+}
+
+# Event-based segmentation markers
+EVENT_WINDOW_CONFIG = {
+    "baseline": {"before": 0, "after": 30},  # 30s baseline window
+    "stimulation": {"before": 0, "after": 30},  # 30s stimulation window
+    "recovery": {"before": 0, "after": 30},  # 30s recovery window
 }

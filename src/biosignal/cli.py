@@ -87,6 +87,16 @@ def run(
     verbose: bool = typer.Option(
         False, "--verbose", "-v", help="Enable verbose output"
     ),
+    window_size: Optional[float] = typer.Option(
+        None,
+        "--window-size",
+        help="Window size in seconds (for Stage 5: 1 or 5)",
+    ),
+    overlap: Optional[float] = typer.Option(
+        None,
+        "--overlap",
+        help="Overlap in seconds (for Stage 5)",
+    ),
 ):
     """Run a pipeline stage."""
     if stage < 1 or stage > 10:
@@ -98,7 +108,15 @@ def run(
 
     try:
         stage_func = _get_stage_func(stage)
-        stage_func(subject_id=subject, verbose=verbose)
+        if stage == 5:
+            stage_func(
+                subject_id=subject,
+                verbose=verbose,
+                window_size_s=window_size or 5.0,
+                overlap_s=overlap or 0.0,
+            )
+        else:
+            stage_func(subject_id=subject, verbose=verbose)
         typer.secho("Stage completed successfully!", fg=typer.colors.GREEN)
     except FileNotFoundError as e:
         typer.secho(f"Error: {e}", fg=typer.colors.RED)
