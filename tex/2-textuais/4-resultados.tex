@@ -374,6 +374,55 @@ Ao final do estágio, foram gerados 64 arquivos \texttt{.npz} (4 modalidades × 
 
 Estes arquivos constituem a entrada para o Estágio 6 de extração de atributos, otimizando o tempo de processamento ao evitar reprocessamento de sinais brutos.
 
+\subsection{Análise Inter-Sujeitos e Padrões Observados}
+
+A análise da variabilidade entre os 16 sujeitos revelou padrões distintos por modalidade, conforme apresentado na Tabela \ref{tab:subjects_segmentacao}. As observações mais importantes revelam também particularidades de cada sujeito para com os sinais coletados, além de análise inter-modalidades e inter-janelas.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Retenção de janelas por sujeito e modalidade}
+    \label{tab:subjects_segmentacao}
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}{lcccccccc}
+            \toprule
+            \textbf{Sujeito} & \textbf{EEG Total} & \textbf{EEG Válidas} & \textbf{ECG Total} & \textbf{ECG Válidas} & \textbf{EMG Total} & \textbf{EMG Válidas} & \textbf{fNIRS Total} & \textbf{fNIRS Válidas} \\
+            \midrule
+            s000 & 28 & 23 (82\%) & 51 & 16 (31\%) & 51 & 24 (47\%) & 28 & 4 (14\%) \\
+            s001 & 23 & 22 (96\%) & 20 & 17 (85\%) & 20 & 7 (35\%) & 23 & 2 (9\%) \\
+            s002 & 15 & 14 (93\%) & 15 & 14 (93\%) & 15 & 0 (0\%) & 15 & 0 (0\%) \\
+            s003 & 16 & 15 (94\%) & 16 & 2 (12\%) & 16 & 13 (81\%) & 16 & 0 (0\%) \\
+            s004 & 20 & 19 (95\%) & 16 & 4 (25\%) & 16 & 10 (62\%) & 20 & 0 (0\%) \\
+            s005 & 21 & 20 (95\%) & 18 & 17 (94\%) & 18 & 17 (94\%) & 21 & 0 (0\%) \\
+            s006 & 20 & 19 (95\%) & 19 & 2 (11\%) & 19 & 8 (42\%) & 20 & 1 (5\%) \\
+            s007 & 16 & 15 (94\%) & 17 & 9 (53\%) & 17 & 2 (12\%) & 16 & 0 (0\%) \\
+            s008 & 19 & 18 (95\%) & 20 & 19 (95\%) & 20 & 8 (40\%) & 19 & 0 (0\%) \\
+            s009 & 20 & 19 (95\%) & 20 & 19 (95\%) & 20 & 3 (15\%) & 20 & 0 (0\%) \\
+            s010 & 14 & 13 (93\%) & 15 & 14 (93\%) & 15 & 4 (27\%) & 14 & 0 (0\%) \\
+            s011 & 24 & 23 (96\%) & 24 & 23 (96\%) & 24 & 21 (88\%) & 24 & 0 (0\%) \\
+            s012 & 23 & 22 (96\%) & 24 & 23 (96\%) & 24 & 10 (42\%) & 23 & 1 (4\%) \\
+            s013 & 26 & 25 (96\%) & 20 & 0 (0\%) & 20 & 10 (50\%) & 26 & 0 (0\%) \\
+            s014 & 25 & 24 (96\%) & 23 & 22 (96\%) & 23 & 10 (43\%) & 25 & 0 (0\%) \\
+            s015 & 19 & 18 (95\%) & 16 & 15 (94\%) & 16 & 0 (0\%) & 4 & 0 (0\%) \\
+            \bottomrule
+        \end{tabular}
+    }
+\end{table}
+
+
+\begin{enumerate}
+    \item \textbf{EEG:} A taxa de retenção foi consistentemente alta (82--96\%), com média de 93,9\%. O sujeito s000 apresentou a menor taxa (82\%), possivelmente devido a artefatos de movimento prolongados durante o protocolo. Os coeficientes de variação (CV) foram extremamente baixos (média de 0,41\% para s000), indicando estabilidade temporal excepcional do sinal EEG.
+
+    \item \textbf{ECG:} Observou-se alta variabilidade inter-sujeitos. Quatro sujeitos (s003, s004, s006, s013) apresentaram taxa de rejeição superior a 70\%, sugerindo problemas crônicos de contato sensor ou arritmias cardíacas. Em contraste, seis sujeitos (s001, s002, s005, s008, s009, s011) alcançaram retenção superior a 85\%. O teste ADF indicou que 97,7\% das janelas de ECG são estacionárias, coerente com a periodicidade cardíaca quase-determinística.
+
+    \item \textbf{EMG:} Dois sujeitos (s002, s015) apresentaram 0\% de janelas utilizáveis, indicando falhas completas na aquisição. A taxa média de estacionariedade ADF foi baixa (14,3\%), refletindo a natureza descontínua e não-estacionária da atividade eletromiográfica durante a indução emocional.
+
+    \item \textbf{fNIRS:} Confirmou-se a exclusão de fNIRS para todos os sujeitos, com apenas 8 janelas válidas (2,5\%) no dataset completo. Os valores de CV foram extremos (média de 2045\%), indicando variabilidade não-fisiológica nos dados.
+
+    \item \textbf{Correlação Inter-Modalidades:} A correlação de Pearson entre as taxas de retenção de diferentes modalidades foi fraca (EEG-ECG: $r = 0{,}24$; ECG-EMG: $r = -0{,}25$), indicando que sujeitos com boa qualidade de EEG não necessariamente apresentam boa qualidade de ECG ou EMG. Isto sugere que as fontes de artefato são específicas por modalidade e não correlacionadas com o estado geral do participante.
+
+    \item \textbf{Variância Inter-Janelas:} O ECG apresentou maior variância entre janelas consecutivas ($\sigma^2 = 0{,}012$) em comparação com EEG ($\sigma^2 = 0{,}003$) e EMG ($\sigma^2 = 0{,}0004$), refletindo a maior dinâmica temporal do sinal cardíaco.
+\end{enumerate}
+
 \section{Discussão dos Achados}
 
 A análise integrada dos resultados indica que os sinais de EEG apresentam a maior estabilidade qualitativa, com baixas taxas de rejeição. No entanto, as modalidades de ECG e EMG demonstraram alta dependência da qualidade do contato sensor-pele e de artefatos de movimento, resultando em perdas significativas de janelas temporais. 
