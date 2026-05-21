@@ -430,3 +430,201 @@ A análise integrada dos resultados indica que os sinais de EEG apresentam a mai
 A rejeição de hipótese nula nos testes de normalidade (Shapiro-Wilk) e homocedasticidade (Levene) justifica a adoção de estratégias de processamento robusto nos estágios subsequentes. Em particular, a filtragem espacial e a normalização de variância (Z-score por canal) tornam-se indispensáveis antes da extração de atributos, para mitigar os vieses introduzidos pela heterogeneidade instrumental e pelos artefatos de cauda pesada.
 
 A modalidade de fNIRS apresentou taxa de rejeição próxima à totalidade ($>95\%$), confirmando falhas estruturais na aquisição original do dataset (distâncias entre fonte e detector nulas). Tais achados, aliados à curtose anômala ($>100$), justificam a exclusão definitiva do fNIRS nas etapas de filtragem (Estágio 4) e extração de atributos (Estágio 6), otimizando o pipeline para os biossinais que mantêm integridade fisiológica mínima.
+
+\section{Extração de Atributos}
+\label{sec:resultados_extracao}
+
+O sexto estágio do pipeline executou a extração de atributos sobre os 64 arquivos de segmentos gerados no Estágio 5, processando as três modalidades ativas (EEG, ECG e EMG) para todos os 16 sujeitos.
+
+\subsection{Matriz de Atributos Gerada}
+
+Ao total, foram extraídas 2.780 observações (janela $\times$ canal), distribuídas conforme a Tabela \ref{tab:features_summary}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Resumo da matriz de atributos extraída no Estágio 6}
+    \label{tab:features_summary}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Modalidade} & \textbf{Atributos} & \textbf{Observações} & \textbf{Descrição adicional} \\
+        \midrule
+        EEG & 18 & 2.417 & 9 temporais + 4 espectrais + 5 bandas \\
+        ECG & 20 & 216  & 13 gerais + 7 HRV (tempo e freq.) \\
+        EMG & 13 & 147  & 9 temporais + 4 espectrais \\
+        \midrule
+        \textbf{Total} & --- & \textbf{2.780} & 3 modalidades, 16 sujeitos \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Atributos Temporais e Espectrais}
+
+A Figura \ref{fig:feature_dist_eeg} apresenta os boxplots dos atributos de EEG agregados sobre todos os sujeitos e janelas. Observa-se elevada dispersão nos atributos de potência de banda, refletindo a variabilidade inter-sujeito característica dos registros de EEG emocional.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage6_features/figures/feature_distributions_eeg.png}
+    \caption{Distribuição dos atributos de EEG (boxplots) agregados sobre todos os sujeitos e janelas válidas.}
+    \label{fig:feature_dist_eeg}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage6_features/figures/feature_distributions_ecg.png}
+    \caption{Distribuição dos atributos de ECG, incluindo os atributos de HRV no domínio do tempo e da frequência.}
+    \label{fig:feature_dist_ecg}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage6_features/figures/feature_distributions_emg.png}
+    \caption{Distribuição dos atributos de EMG, com ênfase nos descritores temporais e espectrais.}
+    \label{fig:feature_dist_emg}
+\end{figure}
+
+\subsection{Correlação entre Atributos}
+
+A Figura \ref{fig:feature_corr_eeg} exibe o mapa de calor das correlações de Pearson entre os atributos de EEG. Destaca-se a alta correlação entre \textit{hjorth\_activity} e variância ($r \approx 1{,}00$), o que é esperado pela definição dos parâmetros de Hjorth, e entre as potências das bandas adjacentes, evidenciando a continuidade espectral dos sinais.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.90\textwidth]{../output/stage6_features/figures/feature_correlation_eeg.png}
+    \caption{Mapa de calor das correlações de Pearson entre atributos de EEG.}
+    \label{fig:feature_corr_eeg}
+\end{figure}
+
+\subsection{Potência por Bandas de EEG}
+
+A Figura \ref{fig:eeg_bands} apresenta as potências médias por banda de frequência para cada sujeito. A banda beta (13--30 Hz) dominou com potência média de 41,7 $\mu V^2$/Hz, seguida pela banda alpha (8--13 Hz) com 19,0 $\mu V^2$/Hz. Esta distribuição é consistente com a literatura de EEG emocional, onde a banda beta é associada ao processamento cognitivo e à resposta ao estímulo visual.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage6_features/figures/eeg_band_power_summary.png}
+    \caption{Potência média por banda de frequência (delta, theta, alpha, beta, gamma) para cada sujeito.}
+    \label{fig:eeg_bands}
+\end{figure}
+
+\subsection{Variabilidade da Frequência Cardíaca (ECG)}
+
+Os atributos de HRV extraídos para o ECG revelaram padrões fisiologicamente plausíveis. O intervalo RR médio foi de $731{,}3 \pm 94{,}8$ ms (correspondente a $\approx 82$ bpm), onde o desvio padrão reflete a variação entre janelas; o SDNN médio intra-janela foi de $105{,}4$ ms e o RMSSD médio de $132{,}4$ ms. A alta variabilidade observada no RMSSD é consistente com a natureza dos registros de curta duração (janelas de 5 s), onde a estimativa HRV tem maior incerteza estatística. Os atributos espectrais de HRV (\textit{lf\_power}, \textit{hf\_power} e \textit{lf\_hf\_ratio}) não foram computáveis neste estágio: janelas de 5 s fornecem resolução espectral de apenas 0{,}2 Hz, insuficiente para resolver as bandas LF (0{,}04--0{,}15 Hz) e HF (0{,}15--0{,}4 Hz) da análise espectral de HRV, que requer registros de pelo menos 2 minutos \cite{taskforce1996}.
+
+\subsection{Atributos de EMG}
+
+Para o EMG, o RMS médio foi de 5.971 $\mu V$, a frequência média de 27{,}4 Hz e a frequência mediana de 20{,}2 Hz. A baixa frequência dominante indica que a atividade muscular capturada é principalmente de baixa intensidade, coerente com o protocolo experimental de indução emocional passiva (sem tarefa motora explícita).
+
+\section{Engenharia de Atributos}
+\label{sec:resultados_engenharia}
+
+O sétimo estágio enriqueceu a matriz de atributos com novos descritores derivados, normalizações e análises de qualidade, conforme descrito na Seção \ref{sec:metodo_engenharia}.
+
+\subsection{Matriz Enriquecida}
+
+A Tabela \ref{tab:eng_summary} resume o número de colunas adicionadas por modalidade após a engenharia de atributos.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Colunas adicionadas pela engenharia de atributos por modalidade}
+    \label{tab:eng_summary}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Modalidade} & \textbf{Orig.} & \textbf{+ Razões} & \textbf{+ Norm.} & \textbf{+ $\Delta$/$\Delta^2$} \\
+        \midrule
+        EEG & 18 & 5 & 23 & 10 \\
+        ECG & 20 & — & 20 & 10 \\
+        EMG & 13 & — & 13 & 10 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Razões de Potência de Banda EEG}
+
+A Figura \ref{fig:band_ratios} apresenta a distribuição das razões de potência por fase experimental. O índice alpha/beta foi o atributo de maior poder discriminante entre fases ($F = 23{,}16$, $p < 0{,}001$), seguido pela razão theta/beta ($F = 17{,}41$, $p < 0{,}001$). Durante a fase de estimulação observa-se redução do índice alpha/beta em relação à linha de base, coerente com o aumento da atividade cortical reportado na literatura de EEG emocional.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage7_engineering/figures/band_ratios_eeg.png}
+    \caption{Razões de potência de banda EEG (alpha/beta, theta/alpha, índice de engajamento, delta/beta, theta/beta) por fase experimental: linha de base, estimulação e recuperação.}
+    \label{fig:band_ratios}
+\end{figure}
+
+\subsection{Discriminabilidade entre Fases}
+
+A Figura \ref{fig:discriminability} apresenta as $F$-estatísticas ANOVA para os 20 atributos mais discriminantes de cada modalidade. Para o EEG, 6 atributos foram estatisticamente significativos ($p < 0{,}05$): \textit{alpha\_beta\_ratio} ($F = 23{,}16$), \textit{theta\_beta\_ratio} ($F = 17{,}41$), \textit{mav} ($F = 9{,}32$), \textit{rms} ($F = 9{,}32$), \textit{mean\_freq} ($F = 7{,}78$) e \textit{spectral\_entropy} ($F = 4{,}78$), sendo os dois primeiros as razões espectrais recém-criadas. Para ECG e EMG, nenhum atributo atingiu significância estatística ($F < 3{,}0$), o que é consistente com o protocolo de indução emocional passiva, que não induz variações autonômicas ou musculares sistemáticas suficientes para discriminar fases em janelas de 5 s.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage7_engineering/figures/phase_discriminability.png}
+    \caption{Discriminabilidade de fase (ANOVA $F$-estatística) por atributo e modalidade. Barras vermelhas indicam significância estatística ($p < 0{,}05$).}
+    \label{fig:discriminability}
+\end{figure}
+
+\subsection{Análise de Redundância}
+
+A análise de correlação de Pearson identificou 7 pares redundantes no EEG ($|r| \geq 0{,}95$), 2 no EMG e nenhum no ECG, conforme ilustrado na Figura \ref{fig:redundancy_eeg}. Os pares redundantes no EEG concentram-se entre \textit{hjorth\_activity} e variância (correlação perfeita por definição) e entre as potências de bandas espectralmente adjacentes. Estes pares serão candidatos à remoção no Estágio 9 de seleção de atributos.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../output/stage7_engineering/figures/feature_redundancy_eeg.png}
+    \caption{Mapa de calor de redundância (correlação de Pearson) entre atributos de EEG. Pares com $|r| \geq 0{,}95$ são considerados redundantes.}
+    \label{fig:redundancy_eeg}
+\end{figure}
+
+\section{Redução de Dimensionalidade}
+\label{sec:resultados_reducao}
+
+O oitavo estágio aplicou PCA sobre as matrizes agregadas do Estágio 7, conforme descrito na Seção~\ref{sec:metodo_reducao}. A Tabela~\ref{tab:pca_summary} resume os resultados por modalidade.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Resultados da PCA por modalidade}
+    \label{tab:pca_summary}
+    \begin{tabular}{lrrrrrrr}
+        \toprule
+        \textbf{Modalidade} & \textbf{Obs.} & \textbf{Atrib. entrada} & \textbf{Descartados} & \textbf{PC@90\%} & \textbf{PC@95\%} & \textbf{Var. PC1} & \textbf{Var. PC2} \\
+        \midrule
+        EEG & 375 & 220 & 4  & 26 & 38 & 18{,}7\% & 15{,}7\% \\
+        ECG & 41  & 172 & 28 & 18 & 22 & 17{,}9\% & 11{,}3\% \\
+        EMG & 37  & 140 & 4  & 15 & 18 & 18{,}9\% & 16{,}1\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{EEG}
+
+Para o EEG, 375 observações (sujeito $\times$ canal $\times$ fase) foram decompostas a partir de 220 atributos (4 colunas \textit{zcr\_norm} descartadas por excesso de NaN). O primeiro componente explica 18{,}7\% da variância total e o segundo 15{,}7\%; os cinco primeiros componentes acumulam 54{,}0\% e os dez primeiros 71{,}1\%. São necessários 26 componentes para atingir 90\% e 38 para 95\% de variância explicada, representando uma compressão de 83\% (220 → 38 dimensões).
+
+A análise das cargas do PC1 revela que os atributos de maior peso são derivados de segunda ordem dos poderes espectrais (\textit{delta2\_alpha\_power\_std}, \textit{delta2\_alpha\_power\_max}, \textit{delta2\_beta\_power\_std}), indicando que a principal fonte de variância entre observações é a instabilidade temporal dos poderes nas bandas alfa e beta. O PC2 é dominado pelos agregados normalizados de máximo (\textit{total\_power\_norm\_max}, \textit{theta\_power\_norm\_max}), capturando contrastes de amplitude entre sujeitos.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage8_dimreduction/figures/scree_plot_eeg.png}
+    \caption{Diagrama de cotovelo (EEG): variância explicada por componente principal. As linhas tracejadas indicam os limiares de 90\% e 95\% de variância acumulada.}
+    \label{fig:scree_eeg}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage8_dimreduction/figures/cumulative_variance_eeg.png}
+    \caption{Curva de variância acumulada (EEG). São necessários 26 e 38 componentes para atingir 90\% e 95\% de variância explicada, respectivamente.}
+    \label{fig:cumvar_eeg}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.80\textwidth]{../output/stage8_dimreduction/figures/pca_scatter_eeg.png}
+    \caption{Dispersão PC1 $\times$ PC2 para EEG, colorida por fase experimental (linha de base, estimulação, recuperação). Observa-se sobreposição parcial entre fases, consistente com os resultados de discriminabilidade do Estágio 7.}
+    \label{fig:pca_scatter_eeg}
+\end{figure}
+
+\subsection{ECG e EMG}
+
+Para o ECG, 28 das 200 colunas de entrada foram descartadas por excesso de NaN (24 relativas às bandas LF/HF e seus derivados, cujos valores são nulos devido à limitação de resolução espectral das janelas de 5~s). A decomposição resultou em 41 componentes (limitada pelo número de observações), com 18 componentes para 90\% e 22 para 95\% de variância. O PC1 do ECG é dominado por atributos de mobilidade de Hjorth e seus deltas (\textit{hjorth\_mobility\_std}, $r = 0{,}167$), refletindo variabilidade na morfologia do sinal cardíaco.
+
+Para o EMG, 37 observações e 140 atributos (4 descartados) resultam em 15 e 18 componentes para os limiares de 90\% e 95\%, respectivamente. O EMG apresenta a maior variância nos primeiros cinco componentes (61{,}6\%), sugerindo menor redundância na estrutura dos atributos em relação ao EEG.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{../output/stage8_dimreduction/figures/pca_loadings_eeg.png}
+    \caption{Mapa de cargas PCA para EEG: primeiros 5 componentes versus 15 atributos de maior carga absoluta. Os atributos de variação temporal dos poderes espectrais (prefixo \textit{delta2\_}) dominam o PC1.}
+    \label{fig:pca_loadings_eeg}
+\end{figure}

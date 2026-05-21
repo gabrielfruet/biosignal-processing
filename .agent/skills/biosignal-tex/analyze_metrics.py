@@ -37,9 +37,9 @@ STAGE_DIRS = {
     4: "stage4_cleaning",
     5: "stage5_segmentation",
     6: "stage6_features",
-    7: "stage7_feature_engineering",
-    8: "stage8_dimensionality_reduction",
-    9: "stage9_feature_selection",
+    7: "stage7_engineering",
+    8: "stage8_dimreduction",
+    9: "stage9_selection",
     10: "stage10_validation",
 }
 

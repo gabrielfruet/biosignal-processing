@@ -233,6 +233,125 @@ Os segmentos válidos foram armazenados em arquivos \texttt{.npz} (NumPy compres
     \item Metadados: timestamps, durações, limiares utilizados.
 \end{itemize}
 
+\section{Extração de Atributos}
+\label{sec:metodo_extracao}
+
+No sexto estágio do pipeline, descritores quantitativos são extraídos de cada janela temporal gerada no Estágio 5, construindo a matriz de atributos para aprendizado de máquina. A modalidade fNIRS foi definitivamente excluída neste estágio, confirmando o resultado do Estágio 5 em que menos de 2,5\% das janelas foram retidas.
+
+\subsection{Atributos no Domínio do Tempo}
+
+Para todas as modalidades ativas (EEG, ECG e EMG), os seguintes descritores temporais são calculados por canal e por janela:
+
+\begin{itemize}
+    \item \textbf{RMS} (\textit{Root Mean Square}): $\text{RMS} = \sqrt{\frac{1}{N}\sum_{i=1}^{N} x_i^2}$ — amplitude efetiva do sinal.
+    \item \textbf{MAV} (\textit{Mean Absolute Value}): $\text{MAV} = \frac{1}{N}\sum_{i=1}^{N} |x_i|$ — indicador de ativação.
+    \item \textbf{Variância:} $\sigma^2 = \frac{1}{N}\sum_{i=1}^{N}(x_i - \bar{x})^2$.
+    \item \textbf{ZCR} (\textit{Zero Crossing Rate}): taxa de cruzamentos por zero, sensível à frequência dominante.
+    \item \textbf{Parâmetros de Hjorth:} Atividade ($\sigma^2$), Mobilidade ($\sqrt{\sigma^2_{dx}/\sigma^2_x}$) e Complexidade (razão de mobilidades de primeira e segunda derivadas), que caracterizam espalhamento espectral sem transformada de Fourier.
+    \item \textbf{Assimetria e Curtose:} momentos estatísticos de terceira e quarta ordem, respectivamente.
+\end{itemize}
+
+\subsection{Atributos no Domínio da Frequência}
+
+A estimativa da Densidade Espectral de Potência (DEP) é realizada pelo método de Welch, com janela de Hann e \textit{nperseg} = $\min(256, N)$ amostras. Os atributos extraídos são:
+
+\begin{itemize}
+    \item \textbf{Potência Total:} integral da DEP pela regra trapezoidal.
+    \item \textbf{Frequência Média e Mediana:} média ponderada pela potência e frequência onde a potência acumulada atinge 50\%.
+    \item \textbf{Entropia Espectral:} $H = -\sum p_i \log_2 p_i$, onde $p_i$ é a DEP normalizada.
+    \item \textbf{Potência por Bandas (EEG):} delta (0,5--4 Hz), theta (4--8 Hz), alpha (8--13 Hz), beta (13--30 Hz) e gamma (30--50 Hz).
+\end{itemize}
+
+\subsection{Atributos de Variabilidade Cardíaca (ECG)}
+
+Para o ECG, atributos adicionais de Variabilidade da Frequência Cardíaca (VFC) são extraídos a partir da detecção de picos R por \textit{threshold} adaptativo com \texttt{scipy.signal.find\_peaks}:
+
+\begin{itemize}
+    \item \textbf{Domínio do tempo (HRV):} $\overline{RR}$, SDNN (desvio padrão dos intervalos RR), RMSSD (raiz quadrada da média dos quadrados das diferenças sucessivas) e pNN50 (proporção de diferenças sucessivas maiores que 50 ms).
+    \item \textbf{Domínio da frequência (HRV):} potência nas bandas LF (0,04--0,15 Hz) e HF (0,15--0,40 Hz), e razão LF/HF, estimadas sobre o tacograma RR reamostrado a 4 Hz.
+\end{itemize}
+
+\section{Engenharia de Atributos}
+\label{sec:metodo_engenharia}
+
+O sétimo estágio aplica transformações sobre a matriz de atributos gerada no Estágio 6, enriquecendo-a com novos descritores derivados e normalizações contextuais. O protocolo experimental (linha de base 30 s → estimulação 30 s → recuperação) é utilizado para atribuir rótulos de fase a cada janela temporal.
+
+\subsection{Atribuição de Fase Experimental}
+
+Cada janela recebe um rótulo de fase baseado em seu instante de início ($t_{\text{start}}$):
+\begin{itemize}
+    \item \textbf{Linha de base (\textit{baseline}):} $t_{\text{start}} < 30$ s
+    \item \textbf{Estimulação (\textit{stimulation}):} $30 \leq t_{\text{start}} < 60$ s
+    \item \textbf{Recuperação (\textit{recovery}):} $t_{\text{start}} \geq 60$ s
+\end{itemize}
+
+\subsection{Razões de Potência de Banda (EEG)}
+
+Cinco razões espectrais são derivadas a partir das potências de banda extraídas no Estágio 6:
+\begin{itemize}
+    \item \textbf{alpha/beta:} indicador de relaxamento vs.\ vigilância.
+    \item \textbf{theta/alpha:} proxy de carga cognitiva.
+    \item \textbf{Índice de Engajamento:} $\beta / (\alpha + \theta)$ — ativação cortical.
+    \item \textbf{delta/beta:} contraste sono vs.\ atividade.
+    \item \textbf{theta/beta:} proxy de ansiedade e estresse.
+\end{itemize}
+
+\subsection{Normalização pela Linha de Base}
+
+Para cada tripla (sujeito, canal, atributo), computa-se a média $\mu_b$ e o desvio padrão $\sigma_b$ das janelas de linha de base. Cada janela é então normalizada em z-score relativo à linha de base:
+\begin{equation}
+    x_{\text{norm}} = \frac{x - \mu_b}{\sigma_b + \varepsilon}
+\end{equation}
+
+\subsection{Atributos Delta (\texorpdfstring{$\Delta$}{Delta}, \texorpdfstring{$\Delta^2$}{Delta2})}
+
+Derivadas temporais discretas de primeira e segunda ordem são calculadas para cinco atributos selecionados por modalidade, capturando a dinâmica de evolução do sinal ao longo das janelas consecutivas:
+\begin{equation}
+    \Delta f_i = f_{i+1} - f_i, \quad \Delta^2 f_i = \Delta f_{i+1} - \Delta f_i
+\end{equation}
+
+\subsection{Agregações Temporais}
+
+Para cada combinação (sujeito, canal, fase), calculam-se média, desvio padrão, mínimo e máximo de todos os atributos, produzindo um CSV agregado por sujeito para uso nos estágios de redução de dimensionalidade e seleção.
+
+\subsection{Análise de Redundância e Discriminabilidade}
+
+A redundância é avaliada pelo coeficiente de correlação de Pearson entre pares de atributos: pares com $|r| \geq 0{,}95$ são sinalizados como altamente redundantes. A discriminabilidade entre fases é estimada pelo teste ANOVA unidirecional ($F$-estatística) aplicado a cada atributo, identificando quais descritores melhor separam as três condições experimentais.
+
+\section{Redução de Dimensionalidade}
+\label{sec:metodo_reducao}
+
+O oitavo estágio do pipeline aplica Análise de Componentes Principais (\textit{Principal Component Analysis} --- PCA) à matriz de atributos agregada pelo Estágio 7, com o objetivo de mitigar a maldição da dimensionalidade e remover redundâncias lineares remanescentes antes da seleção de variáveis.
+
+\subsection{Motivação}
+
+A relação entre o número de observações ($n$) e o número de atributos ($p$) é crítica para a generalização de modelos de aprendizado de máquina. Após o Estágio 7, a matriz de EEG apresenta $n = 375$ observações e $p = 224$ colunas, enquanto ECG ($n = 41$, $p = 200$) e EMG ($n = 37$, $p = 144$) estão em regime subdeterminado ($n < p$). A PCA projeta os dados em um subespaço de menor dimensão preservando a máxima variância.
+
+\subsection{Pré-processamento}
+
+Antes da decomposição, aplica-se o seguinte procedimento por modalidade:
+
+\begin{enumerate}
+    \item \textbf{Remoção de colunas NaN}: colunas com mais de 50\% de valores ausentes são descartadas. No ECG, as 24 colunas derivadas de \textit{lf\_power}, \textit{hf\_power} e \textit{lf\_hf\_ratio} são eliminadas nesta etapa, pois são todas nulas devido à limitação de resolução espectral das janelas de 5 s.
+    \item \textbf{Imputação}: valores ausentes remanescentes são preenchidos pela mediana da coluna.
+    \item \textbf{Padronização}: \textit{StandardScaler} ($\mu = 0$, $\sigma = 1$) é aplicado a todos os atributos numéricos para garantir que a PCA não seja dominada por escala.
+\end{enumerate}
+
+\subsection{Análise de Componentes Principais}
+
+A PCA é ajustada com $k = \min(n, p)$ componentes. O critério de seleção do número de componentes a reter baseia-se na variância acumulada explicada:
+
+\begin{equation}
+    k^* = \min\left\{k : \sum_{i=1}^{k} \lambda_i / \sum_{j=1}^{p} \lambda_j \geq \tau \right\}
+    \label{eq:pca_threshold}
+\end{equation}
+
+\noindent onde $\lambda_i$ são os autovalores ordenados de forma decrescente e $\tau \in \{0{,}90;\, 0{,}95\}$ são os limiares de variância considerados. Os dados transformados com $k^*_{95}$ componentes são salvos para uso no Estágio 9.
+
+\subsection{Visualizações}
+
+Para cada modalidade são gerados quatro gráficos: (i) diagrama de cotovelo (\textit{scree plot}) com as variâncias individuais dos primeiros 20 componentes; (ii) curva de variância acumulada com marcadores nos limiares de 90\% e 95\%; (iii) dispersão PC1 $\times$ PC2 colorida por fase experimental; (iv) mapa de calor das cargas dos primeiros 5 componentes sobre os 15 atributos de maior carga absoluta.
+
 \section{Estrutura do Pipeline de Processamento}
 
 O pipeline projetado compreende dez estágios sequenciais. O estágio inicial corresponde à aquisição e validação de dados brutos. O segundo estágio contempla o cálculo de índices de qualidade (SQI) para a rejeição de segmentos. O terceiro estágio executa análises estatísticas e testes de hipótese. O quarto estágio aplica técnicas de filtragem e correção de artefatos. O quinto estágio realiza a segmentação temporal dos sinais em janelas. O sexto estágio executa a extração de atributos nos domínios do tempo e da frequência. O sétimo estágio realiza a engenharia de novos atributos. O oitavo estágio aplica redução de dimensionalidade por componentes principais. O nono estágio executa a seleção de variáveis informativas. O décimo estágio valida estatisticamente o conjunto final. Este relatório concentra-se na execução dos cinco primeiros estágios do projeto.

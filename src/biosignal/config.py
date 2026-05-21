@@ -39,6 +39,24 @@ STAGE5_METRICS_DIR = STAGE5_DIR / "metrics"
 STAGE5_FIGURES_DIR = STAGE5_DIR / "figures"
 STAGE5_DATA_DIR = STAGE5_DIR / "data" / "segments"
 
+# Stage 6: Feature Extraction
+STAGE6_DIR = OUTPUT_DIR / "stage6_features"
+STAGE6_METRICS_DIR = STAGE6_DIR / "metrics"
+STAGE6_FIGURES_DIR = STAGE6_DIR / "figures"
+STAGE6_DATA_DIR = STAGE6_DIR / "data"
+
+# Stage 7: Feature Engineering
+STAGE7_DIR = OUTPUT_DIR / "stage7_engineering"
+STAGE7_METRICS_DIR = STAGE7_DIR / "metrics"
+STAGE7_FIGURES_DIR = STAGE7_DIR / "figures"
+STAGE7_DATA_DIR = STAGE7_DIR / "data"
+
+# Stage 8: Dimensionality Reduction
+STAGE8_DIR = OUTPUT_DIR / "stage8_dimreduction"
+STAGE8_METRICS_DIR = STAGE8_DIR / "metrics"
+STAGE8_FIGURES_DIR = STAGE8_DIR / "figures"
+STAGE8_DATA_DIR = STAGE8_DIR / "data"
+
 # Sampling frequencies (Hz)
 SFREQ = {
     "eeg": 512,
