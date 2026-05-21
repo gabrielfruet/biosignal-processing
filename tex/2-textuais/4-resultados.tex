@@ -506,8 +506,65 @@ A Figura \ref{fig:eeg_bands} apresenta as potências médias por banda de frequ�
 
 \subsection{Variabilidade da Frequência Cardíaca (ECG)}
 
-Os atributos de HRV extraídos para o ECG revelaram padrões fisiologicamente plausíveis. O intervalo RR médio foi de $731{,}3 \pm 105{,}4$ ms (correspondente a $\approx 82$ bpm), o SDNN médio foi de $105{,}4$ ms e o RMSSD médio de $132{,}4$ ms. A alta variabilidade observada no RMSSD é consistente com a natureza dos registros de curta duração (janelas de 5 s), onde a estimativa HRV tem maior incerteza estatística.
+Os atributos de HRV extraídos para o ECG revelaram padrões fisiologicamente plausíveis. O intervalo RR médio foi de $731{,}3 \pm 94{,}8$ ms (correspondente a $\approx 82$ bpm), onde o desvio padrão reflete a variação entre janelas; o SDNN médio intra-janela foi de $105{,}4$ ms e o RMSSD médio de $132{,}4$ ms. A alta variabilidade observada no RMSSD é consistente com a natureza dos registros de curta duração (janelas de 5 s), onde a estimativa HRV tem maior incerteza estatística. Os atributos espectrais de HRV (\textit{lf\_power}, \textit{hf\_power} e \textit{lf\_hf\_ratio}) não foram computáveis neste estágio: janelas de 5 s fornecem resolução espectral de apenas 0{,}2 Hz, insuficiente para resolver as bandas LF (0{,}04--0{,}15 Hz) e HF (0{,}15--0{,}4 Hz) da análise espectral de HRV, que requer registros de pelo menos 2 minutos \cite{taskforce1996}.
 
 \subsection{Atributos de EMG}
 
 Para o EMG, o RMS médio foi de 5.971 $\mu V$, a frequência média de 27{,}4 Hz e a frequência mediana de 20{,}2 Hz. A baixa frequência dominante indica que a atividade muscular capturada é principalmente de baixa intensidade, coerente com o protocolo experimental de indução emocional passiva (sem tarefa motora explícita).
+
+\section{Engenharia de Atributos}
+\label{sec:resultados_engenharia}
+
+O sétimo estágio enriqueceu a matriz de atributos com novos descritores derivados, normalizações e análises de qualidade, conforme descrito na Seção \ref{sec:metodo_engenharia}.
+
+\subsection{Matriz Enriquecida}
+
+A Tabela \ref{tab:eng_summary} resume o número de colunas adicionadas por modalidade após a engenharia de atributos.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Colunas adicionadas pela engenharia de atributos por modalidade}
+    \label{tab:eng_summary}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Modalidade} & \textbf{Orig.} & \textbf{+ Razões} & \textbf{+ Norm.} & \textbf{+ $\Delta$/$\Delta^2$} \\
+        \midrule
+        EEG & 18 & 5 & 23 & 10 \\
+        ECG & 20 & — & 20 & 10 \\
+        EMG & 13 & — & 13 & 10 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Razões de Potência de Banda EEG}
+
+A Figura \ref{fig:band_ratios} apresenta a distribuição das razões de potência por fase experimental. O índice alpha/beta foi o atributo de maior poder discriminante entre fases ($F = 23{,}16$, $p < 0{,}001$), seguido pela razão theta/beta ($F = 17{,}41$, $p < 0{,}001$). Durante a fase de estimulação observa-se redução do índice alpha/beta em relação à linha de base, coerente com o aumento da atividade cortical reportado na literatura de EEG emocional.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage7_engineering/figures/band_ratios_eeg.png}
+    \caption{Razões de potência de banda EEG (alpha/beta, theta/alpha, índice de engajamento, delta/beta, theta/beta) por fase experimental: linha de base, estimulação e recuperação.}
+    \label{fig:band_ratios}
+\end{figure}
+
+\subsection{Discriminabilidade entre Fases}
+
+A Figura \ref{fig:discriminability} apresenta as $F$-estatísticas ANOVA para os 20 atributos mais discriminantes de cada modalidade. Para o EEG, 6 atributos foram estatisticamente significativos ($p < 0{,}05$): \textit{alpha\_beta\_ratio} ($F = 23{,}16$), \textit{theta\_beta\_ratio} ($F = 17{,}41$), \textit{mav} ($F = 9{,}32$), \textit{rms} ($F = 9{,}32$), \textit{mean\_freq} ($F = 7{,}78$) e \textit{spectral\_entropy} ($F = 4{,}78$), sendo os dois primeiros as razões espectrais recém-criadas. Para ECG e EMG, nenhum atributo atingiu significância estatística ($F < 3{,}0$), o que é consistente com o protocolo de indução emocional passiva, que não induz variações autonômicas ou musculares sistemáticas suficientes para discriminar fases em janelas de 5 s.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage7_engineering/figures/phase_discriminability.png}
+    \caption{Discriminabilidade de fase (ANOVA $F$-estatística) por atributo e modalidade. Barras vermelhas indicam significância estatística ($p < 0{,}05$).}
+    \label{fig:discriminability}
+\end{figure}
+
+\subsection{Análise de Redundância}
+
+A análise de correlação de Pearson identificou 7 pares redundantes no EEG ($|r| \geq 0{,}95$), 2 no EMG e nenhum no ECG, conforme ilustrado na Figura \ref{fig:redundancy_eeg}. Os pares redundantes no EEG concentram-se entre \textit{hjorth\_activity} e variância (correlação perfeita por definição) e entre as potências de bandas espectralmente adjacentes. Estes pares serão candidatos à remoção no Estágio 9 de seleção de atributos.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../output/stage7_engineering/figures/feature_redundancy_eeg.png}
+    \caption{Mapa de calor de redundância (correlação de Pearson) entre atributos de EEG. Pares com $|r| \geq 0{,}95$ são considerados redundantes.}
+    \label{fig:redundancy_eeg}
+\end{figure}

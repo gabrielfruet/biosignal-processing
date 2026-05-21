@@ -36,8 +36,8 @@
 | 2 | Signal Quality Index (SQI) | ✅ Complete | SNR, kurtosis, spectral entropy, artifact detection |
 | 3 | Initial Statistical Analysis | ✅ Complete | Descriptive stats, normality tests, correlation heatmap |
 | 4 | Data Cleaning & Correction | ✅ Complete | Notch filter, band-pass, interpolation, Winsorization, Cohen's d |
-| 5 | Segmentation | 📋 Todo | Fixed/overlapping windows, event-based |
-| 6 | Feature Extraction | 📋 Todo | Time/frequency/time-frequency/nonlinear features |
+| 5 | Segmentation | ✅ Complete | Fixed/overlapping windows, SQI propagation, 64 NPZ files |
+| 6 | Feature Extraction | ✅ Complete | 2.780 feature rows, 18/20/13 features per modality |
 | 7 | Feature Engineering | 📋 Todo | Band ratios, normalization, derived features |
 | 8 | Dimensionality Reduction | 📋 Todo | PCA, ICA, Scree plot |
 | 9 | Feature Selection | 📋 Todo | Filter/Wrapper/Embedded methods |
@@ -87,26 +87,40 @@
   - Winsorization (5th-95th percentile)
   - Z-score outlier rejection
 
+### Stage 5: Segmentation ✅
+- **Completed:** May 6, 2026
+- **Output:** 64 NPZ segment files (`output/stage5_segmentation/data/segments/`)
+- **Key findings:**
+  - EEG: 93.9% window retention, CV < 2%
+  - ECG: 64.7% retention, 97.7% ADF stationary
+  - EMG: 44.0% retention (movement artifacts)
+  - fNIRS: 2.5% retention — definitively excluded
+
+### Stage 6: Feature Extraction ✅
+- **Completed:** May 20, 2026
+- **Output:** 48 CSV files + 7 figures (`output/stage6_features/`)
+- **Key findings:**
+  - 2,780 total feature rows (EEG: 2,417 | ECG: 216 | EMG: 147)
+  - EEG: 18 features/channel (9 temporal + 4 spectral + 5 band powers)
+  - ECG: 20 features/channel (13 general + 7 HRV)
+  - EMG: 13 features/channel (9 temporal + 4 spectral)
+  - EEG dominant band: beta (41.7 µV²/Hz), ECG mean RR: 731 ms
+
 ---
 
 ## Next Steps
 
-### Immediate (Stage 5)
-1. Implement Stage 5: Segmentation (Windowing)
-2. Add SQI-based segment rejection to cleaning stage
+### Immediate (Stage 7)
+1. Implement Stage 7: Feature Engineering
+2. Input: `output/stage6_features/data/s*_{eeg,ecg,emg}_features.csv`
 
-### Stage 5 Requirements
-- Fixed window segmentation (1s, 5s options)
-- Overlapping windows support
-- Event-based physiological segmentation
-- Intra-window stability validation
-- Inter-window variance analysis
-
-### Stage 6 Requirements
-- Time-domain features (RMS, MAV, Variance, ZCR, Hjorth)
-- Frequency-domain features (FFT, spectral power, band power)
-- Time-frequency features (Wavelet, STFT, Hilbert-Huang)
-- Nonlinear features (Entropy, DFA, Fractal dimension, Poincaré)
+### Stage 7 Requirements
+- Band power ratios (alpha/beta, theta/alpha, etc.)
+- Normalize features by baseline window
+- Generate delta features (Δ, Δ²)
+- Temporal aggregations (mean/std/min/max per subject per modality)
+- Feature redundancy analysis
+- Correlation with response variable
 
 ---
 

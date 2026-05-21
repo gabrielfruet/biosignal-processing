@@ -1,6 +1,6 @@
 """Pipeline stages."""
 
-from biosignal.stages import acquisition, sqi, statistics, cleaning, segmentation, features
+from biosignal.stages import acquisition, sqi, statistics, cleaning, segmentation, features, engineering
 
 __all__ = [
     "acquisition",
@@ -9,4 +9,5 @@ __all__ = [
     "cleaning",
     "segmentation",
     "features",
+    "engineering",
 ]

@@ -45,6 +45,12 @@ STAGE6_METRICS_DIR = STAGE6_DIR / "metrics"
 STAGE6_FIGURES_DIR = STAGE6_DIR / "figures"
 STAGE6_DATA_DIR = STAGE6_DIR / "data"
 
+# Stage 7: Feature Engineering
+STAGE7_DIR = OUTPUT_DIR / "stage7_engineering"
+STAGE7_METRICS_DIR = STAGE7_DIR / "metrics"
+STAGE7_FIGURES_DIR = STAGE7_DIR / "figures"
+STAGE7_DATA_DIR = STAGE7_DIR / "data"
+
 # Sampling frequencies (Hz)
 SFREQ = {
     "eeg": 512,

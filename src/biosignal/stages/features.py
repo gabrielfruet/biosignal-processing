@@ -252,18 +252,38 @@ def _plot_feature_correlation(df: pd.DataFrame, modality: str, out_dir: Path) ->
     if len(feature_cols) < 2:
         return
 
-    corr = df[feature_cols].dropna().corr()
+    corr = df[feature_cols].dropna().corr().values
     n = len(feature_cols)
-    fig, ax = plt.subplots(figsize=(max(6, n * 0.7), max(5, n * 0.6)))
-    im = ax.imshow(corr.values, vmin=-1, vmax=1, cmap="RdBu_r", aspect="auto")
+
+    # Lower triangle only (mask upper triangle including diagonal)
+    mask = np.triu(np.ones((n, n), dtype=bool))
+    corr_masked = np.where(mask, np.nan, corr)
+
+    fig, ax = plt.subplots(figsize=(max(8, n * 0.9), max(6, n * 0.8)))
+    im = ax.imshow(corr_masked, vmin=-1, vmax=1, cmap="RdBu_r", aspect="auto")
+
     ax.set_xticks(range(n))
     ax.set_yticks(range(n))
-    ax.set_xticklabels(feature_cols, rotation=45, ha="right", fontsize=7)
-    ax.set_yticklabels(feature_cols, fontsize=7)
-    plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-    ax.set_title(f"Feature Correlation — {modality.upper()}", fontsize=11)
-    fig.tight_layout()
-    fig.savefig(out_dir / f"feature_correlation_{modality}.png", dpi=120)
+    ax.set_xticklabels(feature_cols, rotation=45, ha="right", fontsize=8)
+    ax.set_yticklabels(feature_cols, fontsize=8)
+
+    cbar = plt.colorbar(im, ax=ax)
+    cbar.set_label("Correlation Coefficient")
+
+    # Text annotations on lower triangle including diagonal
+    for i in range(n):
+        for j in range(i + 1):
+            val = corr[i, j]
+            color = "white" if abs(val) > 0.5 else "black"
+            ax.text(j, i, f"{val:.2f}", ha="center", va="center", color=color, fontsize=7)
+
+    ax.set_title(f"Feature Correlation — {modality.upper()}\n(Pearson r, lower triangle)", fontsize=11)
+    ax.set_xlabel("Feature")
+    ax.set_ylabel("Feature")
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
+    fig.savefig(out_dir / f"feature_correlation_{modality}.png", dpi=150, bbox_inches="tight")
     plt.close(fig)
 
 
