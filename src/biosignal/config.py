@@ -51,6 +51,12 @@ STAGE7_METRICS_DIR = STAGE7_DIR / "metrics"
 STAGE7_FIGURES_DIR = STAGE7_DIR / "figures"
 STAGE7_DATA_DIR = STAGE7_DIR / "data"
 
+# Stage 8: Dimensionality Reduction
+STAGE8_DIR = OUTPUT_DIR / "stage8_dimreduction"
+STAGE8_METRICS_DIR = STAGE8_DIR / "metrics"
+STAGE8_FIGURES_DIR = STAGE8_DIR / "figures"
+STAGE8_DATA_DIR = STAGE8_DIR / "data"
+
 # Sampling frequencies (Hz)
 SFREQ = {
     "eeg": 512,

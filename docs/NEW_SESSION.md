@@ -16,7 +16,7 @@ cd /home/pauloricms/Documents/Materias_UFC/Biossinais/biosignal-processing
 uv run python -m biosignal run <1-10>
 
 # Run with verbose output
-uv run python -m biosignal run 6 --verbose
+uv run python -m biosignal run 8 --verbose
 
 # Run for specific subject
 uv run python -m biosignal run 6 --subject 5 --verbose
@@ -37,55 +37,27 @@ uv run python -m biosignal list-stages
 | 4. Cleaning | ✅ | Apr 16, 2026 | `run 4` | `stage4_cleaning/` |
 | 5. Segmentation | ✅ | May 6, 2026 | `run 5` | `stage5_segmentation/`, 64 NPZ files |
 | 6. Feature Extraction | ✅ | May 20, 2026 | `run 6` | `stage6_features/`, 2,780 rows |
+| 7. Feature Engineering | ✅ | May 20, 2026 | `run 7` | `stage7_engineering/`, EEG:63col, ECG:57col, EMG:43col |
+| 8. Dimensionality Reduction | ✅ | May 21, 2026 | `run 8` | `stage8_dimreduction/`, PCA 12 figures |
 
 ---
 
-## Current State (May 20, 2026)
+## Current State (May 21, 2026)
 
-### Stage 6 Completed — Feature Extraction Results
+### Stage 8 Completed — PCA Results
 
-**Feature Matrix (All 16 Subjects):**
+| Modality | Obs | Features | PC@90% | PC@95% | PC1 var | PC2 var |
+|----------|-----|----------|--------|--------|---------|---------|
+| EEG      | 375 | 220      | 26     | 38     | 18.7%   | 15.7%   |
+| ECG      | 41  | 172      | 18     | 22     | 17.9%   | 11.3%   |
+| EMG      | 37  | 140      | 15     | 18     | 18.9%   | 16.1%   |
 
-| Modality | Features | Observations | Notes |
-|----------|----------|--------------|-------|
-| EEG | 18 | 2,417 | 9 temporal + 4 spectral + 5 band powers |
-| ECG | 20 | 216 | 13 general + 7 HRV (time + freq) |
-| EMG | 13 | 147 | 9 temporal + 4 spectral |
-| fNIRS | — | — | Excluded (< 2.5% window retention) |
-| **Total** | — | **2,780** | — |
+**Key findings:**
 
-**Key Findings:**
-- **EEG dominant band:** beta (41.7 µV²/Hz) > alpha (19.0 µV²/Hz)
-- **ECG HRV:** mean RR = 731 ms (~82 bpm), SDNN = 105 ms, RMSSD = 132 ms
-- **EMG:** mean RMS = 5,971 µV, mean freq = 27.4 Hz
-- **Subjects s002, s015:** EMG had 0 usable windows (Stage 5 rejection)
-- **Subject s013:** ECG had 0 usable windows
-
-**Segmentation Results (from Stage 5):**
-
-| Modality | Total Windows | Usable | Retention |
-|----------|--------------|--------|-----------|
-| EEG (8ch) | 329 | 309 | 93.9% |
-| ECG | 334 | 216 | 64.7% |
-| EMG | 334 | 147 | 44.0% |
-| fNIRS | 314 | 8 | 2.5% |
-
----
-
-## Next Steps (Stage 7: Feature Engineering)
-
-### Stage 7 Requirements
-- **ENG-001:** Band power ratios (alpha/beta, theta/alpha, etc.)
-- **ENG-002:** Normalize features by baseline window
-- **ENG-003:** Delta features (Δ, Δ²) — first and second derivatives across windows
-- **ENG-004:** Temporal aggregations (mean/std/min/max per subject per modality)
-- **ENG-005:** Correlation with response variable
-- **ENG-006:** Feature redundancy analysis
-
-### Stages 8-10
-- Stage 8: Dimensionality Reduction (PCA, Scree plot)
-- Stage 9: Feature Selection (ANOVA, Mutual Information, wrapper methods)
-- Stage 10: Final Statistical Validation
+- EEG compression: 220 → 38 components (83% reduction at 95% variance)
+- ECG: 28/200 columns dropped (lf_power/hf_power/lf_hf_ratio all NaN from 5s window limitation)
+- EEG PC1 driven by delta² spectral power features; PC2 by normalised power in max aggregation
+- Phase separation visible in EEG PC1×PC2 scatter; ECG/EMG less separable
 
 ---
 
@@ -97,14 +69,16 @@ uv run python -m biosignal list-stages
 | `docs/ARCHITECTURE.md` | Project structure, CLI commands |
 | `docs/CONTEXT.md` | Current project status |
 | `docs/NEW_SESSION.md` | This file — quick reference |
+| `src/biosignal/stages/dimreduction.py` | Stage 8 implementation |
+| `src/biosignal/stages/engineering.py` | Stage 7 implementation |
 | `src/biosignal/stages/features.py` | Stage 6 implementation |
 | `src/biosignal/config.py` | Configuration constants |
-| `tex/documento.tex` | Academic document (50 pages, updated with Stages 5–6) |
-| `output/stage5_segmentation/data/segments/` | 64 NPZ segment files (Stage 6 input) |
-| `output/stage6_features/data/` | 48 feature CSVs (Stage 7 input) |
-| `output/stage6_features/metrics/features_metrics.json` | Global feature summary |
-| `draft/STAGE6_PLAN.md` | Stage 6 plan |
-| `draft/STAGE6_PROGRESS.md` | Stage 6 progress report |
+| `tex/documento.tex` | Academic document (~57 pages, updated through Stage 8) |
+| `output/stage7_engineering/data/` | 90 aggregated/engineered CSVs (Stage 8 input) |
+| `output/stage8_dimreduction/data/` | 6 PCA reduced/loadings CSVs (Stage 9 input) |
+| `output/stage8_dimreduction/metrics/dimreduction_metrics.json` | Global PCA summary |
+| `draft/STAGE8_PLAN.md` | Stage 8 plan |
+| `draft/STAGE8_PROGRESS.md` | Stage 8 progress report |
 
 ---
 
@@ -118,26 +92,44 @@ uv run python -m biosignal list-stages
 
 ## LaTeX Document
 
-**Location:** `tex/documento.tex` — 50 pages, fully compiled
+**Location:** `tex/documento.tex` — ~57 pages, fully compiled
 
-**Stage 6 Sections Added:**
-- `3-metodologia.tex`: `\section{Extração de Atributos}` (3 subsections)
-- `4-resultados.tex`: `\section{Extração de Atributos}` (5 subsections, real metrics)
+**Sections added through Stage 8:**
+- `3-metodologia.tex`: Stages 6, 7, 8 methodology sections
+- `4-resultados.tex`: Stages 6, 7, 8 results sections (all with real metrics)
 
 **Compile:**
 ```bash
 cd tex
-pdflatex documento.tex  # run 2-3 times to resolve all cross-references
+pdflatex documento.tex  # run 3 times to resolve all cross-references
+bibtex documento        # if bibliography changed
+pdflatex documento.tex
+pdflatex documento.tex
 ```
+
+---
+
+## Next Steps (Stage 9: Feature Selection)
+
+### Stage 9 Requirements
+
+- Input: `output/stage8_dimreduction/data/{mod}_pca_reduced.csv`
+- Filter methods: ANOVA F-test, Mutual Information
+- Wrapper method: Recursive Feature Elimination (RFE) with cross-validation
+- Embedded method: L1-regularised classifier (Lasso/SVM-L1)
+- Output: ranked feature list + selected feature subset CSV
+- Evaluation: cross-validated classification accuracy before/after selection
 
 ---
 
 ## Important Notes
 
-1. **Python package:** Uses `uv` for dependency management
-2. **Data location:** `data/ieee-multimodal-extracted/{subject_id}/`
-3. **Output location:** `output/stage{N}_{name}/`
-4. **fNIRS excluded:** Do not process fNIRS in Stages 6–10
-5. **When updating docs:** Check `git log` for accurate dates per branch
-6. **When updating LaTeX:** Always read JSON metrics first, then write `.tex` with real values
-7. **Cross-references:** Always compile pdflatex 3× after adding new sections
+1. **Python package:** Uses `uv` for dependency management (`uv add <pkg>` to add deps)
+2. **scikit-learn** added in Stage 8 — available for Stages 9–10
+3. **Data location:** `data/ieee-multimodal-extracted/{subject_id}/`
+4. **Output location:** `output/stage{N}_{name}/`
+5. **fNIRS excluded:** Do not process fNIRS in Stages 6–10
+6. **ECG limitation:** lf_power/hf_power/lf_hf_ratio are all NaN (5s windows insufficient for HRV spectral analysis)
+7. **When updating docs:** Check `git log` for accurate dates per branch
+8. **When updating LaTeX:** Run skill analyzer first: `python3 .agent/skills/biosignal-tex/analyze_metrics.py <N>`
+9. **Cross-references:** Always compile pdflatex 3× after adding new sections

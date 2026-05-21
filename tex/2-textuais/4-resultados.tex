@@ -568,3 +568,63 @@ A análise de correlação de Pearson identificou 7 pares redundantes no EEG ($|
     \caption{Mapa de calor de redundância (correlação de Pearson) entre atributos de EEG. Pares com $|r| \geq 0{,}95$ são considerados redundantes.}
     \label{fig:redundancy_eeg}
 \end{figure}
+
+\section{Redução de Dimensionalidade}
+\label{sec:resultados_reducao}
+
+O oitavo estágio aplicou PCA sobre as matrizes agregadas do Estágio 7, conforme descrito na Seção~\ref{sec:metodo_reducao}. A Tabela~\ref{tab:pca_summary} resume os resultados por modalidade.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Resultados da PCA por modalidade}
+    \label{tab:pca_summary}
+    \begin{tabular}{lrrrrrrr}
+        \toprule
+        \textbf{Modalidade} & \textbf{Obs.} & \textbf{Atrib. entrada} & \textbf{Descartados} & \textbf{PC@90\%} & \textbf{PC@95\%} & \textbf{Var. PC1} & \textbf{Var. PC2} \\
+        \midrule
+        EEG & 375 & 220 & 4  & 26 & 38 & 18{,}7\% & 15{,}7\% \\
+        ECG & 41  & 172 & 28 & 18 & 22 & 17{,}9\% & 11{,}3\% \\
+        EMG & 37  & 140 & 4  & 15 & 18 & 18{,}9\% & 16{,}1\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{EEG}
+
+Para o EEG, 375 observações (sujeito $\times$ canal $\times$ fase) foram decompostas a partir de 220 atributos (4 colunas \textit{zcr\_norm} descartadas por excesso de NaN). O primeiro componente explica 18{,}7\% da variância total e o segundo 15{,}7\%; os cinco primeiros componentes acumulam 54{,}0\% e os dez primeiros 71{,}1\%. São necessários 26 componentes para atingir 90\% e 38 para 95\% de variância explicada, representando uma compressão de 83\% (220 → 38 dimensões).
+
+A análise das cargas do PC1 revela que os atributos de maior peso são derivados de segunda ordem dos poderes espectrais (\textit{delta2\_alpha\_power\_std}, \textit{delta2\_alpha\_power\_max}, \textit{delta2\_beta\_power\_std}), indicando que a principal fonte de variância entre observações é a instabilidade temporal dos poderes nas bandas alfa e beta. O PC2 é dominado pelos agregados normalizados de máximo (\textit{total\_power\_norm\_max}, \textit{theta\_power\_norm\_max}), capturando contrastes de amplitude entre sujeitos.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage8_dimreduction/figures/scree_plot_eeg.png}
+    \caption{Diagrama de cotovelo (EEG): variância explicada por componente principal. As linhas tracejadas indicam os limiares de 90\% e 95\% de variância acumulada.}
+    \label{fig:scree_eeg}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage8_dimreduction/figures/cumulative_variance_eeg.png}
+    \caption{Curva de variância acumulada (EEG). São necessários 26 e 38 componentes para atingir 90\% e 95\% de variância explicada, respectivamente.}
+    \label{fig:cumvar_eeg}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.80\textwidth]{../output/stage8_dimreduction/figures/pca_scatter_eeg.png}
+    \caption{Dispersão PC1 $\times$ PC2 para EEG, colorida por fase experimental (linha de base, estimulação, recuperação). Observa-se sobreposição parcial entre fases, consistente com os resultados de discriminabilidade do Estágio 7.}
+    \label{fig:pca_scatter_eeg}
+\end{figure}
+
+\subsection{ECG e EMG}
+
+Para o ECG, 28 das 200 colunas de entrada foram descartadas por excesso de NaN (24 relativas às bandas LF/HF e seus derivados, cujos valores são nulos devido à limitação de resolução espectral das janelas de 5~s). A decomposição resultou em 41 componentes (limitada pelo número de observações), com 18 componentes para 90\% e 22 para 95\% de variância. O PC1 do ECG é dominado por atributos de mobilidade de Hjorth e seus deltas (\textit{hjorth\_mobility\_std}, $r = 0{,}167$), refletindo variabilidade na morfologia do sinal cardíaco.
+
+Para o EMG, 37 observações e 140 atributos (4 descartados) resultam em 15 e 18 componentes para os limiares de 90\% e 95\%, respectivamente. O EMG apresenta a maior variância nos primeiros cinco componentes (61{,}6\%), sugerindo menor redundância na estrutura dos atributos em relação ao EEG.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{../output/stage8_dimreduction/figures/pca_loadings_eeg.png}
+    \caption{Mapa de cargas PCA para EEG: primeiros 5 componentes versus 15 atributos de maior carga absoluta. Os atributos de variação temporal dos poderes espectrais (prefixo \textit{delta2\_}) dominam o PC1.}
+    \label{fig:pca_loadings_eeg}
+\end{figure}

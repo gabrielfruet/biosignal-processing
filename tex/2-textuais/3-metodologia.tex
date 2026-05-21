@@ -318,6 +318,40 @@ Para cada combinação (sujeito, canal, fase), calculam-se média, desvio padrã
 
 A redundância é avaliada pelo coeficiente de correlação de Pearson entre pares de atributos: pares com $|r| \geq 0{,}95$ são sinalizados como altamente redundantes. A discriminabilidade entre fases é estimada pelo teste ANOVA unidirecional ($F$-estatística) aplicado a cada atributo, identificando quais descritores melhor separam as três condições experimentais.
 
+\section{Redução de Dimensionalidade}
+\label{sec:metodo_reducao}
+
+O oitavo estágio do pipeline aplica Análise de Componentes Principais (\textit{Principal Component Analysis} --- PCA) à matriz de atributos agregada pelo Estágio 7, com o objetivo de mitigar a maldição da dimensionalidade e remover redundâncias lineares remanescentes antes da seleção de variáveis.
+
+\subsection{Motivação}
+
+A relação entre o número de observações ($n$) e o número de atributos ($p$) é crítica para a generalização de modelos de aprendizado de máquina. Após o Estágio 7, a matriz de EEG apresenta $n = 375$ observações e $p = 224$ colunas, enquanto ECG ($n = 41$, $p = 200$) e EMG ($n = 37$, $p = 144$) estão em regime subdeterminado ($n < p$). A PCA projeta os dados em um subespaço de menor dimensão preservando a máxima variância.
+
+\subsection{Pré-processamento}
+
+Antes da decomposição, aplica-se o seguinte procedimento por modalidade:
+
+\begin{enumerate}
+    \item \textbf{Remoção de colunas NaN}: colunas com mais de 50\% de valores ausentes são descartadas. No ECG, as 24 colunas derivadas de \textit{lf\_power}, \textit{hf\_power} e \textit{lf\_hf\_ratio} são eliminadas nesta etapa, pois são todas nulas devido à limitação de resolução espectral das janelas de 5 s.
+    \item \textbf{Imputação}: valores ausentes remanescentes são preenchidos pela mediana da coluna.
+    \item \textbf{Padronização}: \textit{StandardScaler} ($\mu = 0$, $\sigma = 1$) é aplicado a todos os atributos numéricos para garantir que a PCA não seja dominada por escala.
+\end{enumerate}
+
+\subsection{Análise de Componentes Principais}
+
+A PCA é ajustada com $k = \min(n, p)$ componentes. O critério de seleção do número de componentes a reter baseia-se na variância acumulada explicada:
+
+\begin{equation}
+    k^* = \min\left\{k : \sum_{i=1}^{k} \lambda_i / \sum_{j=1}^{p} \lambda_j \geq \tau \right\}
+    \label{eq:pca_threshold}
+\end{equation}
+
+\noindent onde $\lambda_i$ são os autovalores ordenados de forma decrescente e $\tau \in \{0{,}90;\, 0{,}95\}$ são os limiares de variância considerados. Os dados transformados com $k^*_{95}$ componentes são salvos para uso no Estágio 9.
+
+\subsection{Visualizações}
+
+Para cada modalidade são gerados quatro gráficos: (i) diagrama de cotovelo (\textit{scree plot}) com as variâncias individuais dos primeiros 20 componentes; (ii) curva de variância acumulada com marcadores nos limiares de 90\% e 95\%; (iii) dispersão PC1 $\times$ PC2 colorida por fase experimental; (iv) mapa de calor das cargas dos primeiros 5 componentes sobre os 15 atributos de maior carga absoluta.
+
 \section{Estrutura do Pipeline de Processamento}
 
 O pipeline projetado compreende dez estágios sequenciais. O estágio inicial corresponde à aquisição e validação de dados brutos. O segundo estágio contempla o cálculo de índices de qualidade (SQI) para a rejeição de segmentos. O terceiro estágio executa análises estatísticas e testes de hipótese. O quarto estágio aplica técnicas de filtragem e correção de artefatos. O quinto estágio realiza a segmentação temporal dos sinais em janelas. O sexto estágio executa a extração de atributos nos domínios do tempo e da frequência. O sétimo estágio realiza a engenharia de novos atributos. O oitavo estágio aplica redução de dimensionalidade por componentes principais. O nono estágio executa a seleção de variáveis informativas. O décimo estágio valida estatisticamente o conjunto final. Este relatório concentra-se na execução dos cinco primeiros estágios do projeto.

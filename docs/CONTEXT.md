@@ -37,9 +37,9 @@
 | 3 | Initial Statistical Analysis | ✅ Complete | Descriptive stats, normality tests, correlation heatmap |
 | 4 | Data Cleaning & Correction | ✅ Complete | Notch filter, band-pass, interpolation, Winsorization, Cohen's d |
 | 5 | Segmentation | ✅ Complete | Fixed/overlapping windows, SQI propagation, 64 NPZ files |
-| 6 | Feature Extraction | ✅ Complete | 2.780 feature rows, 18/20/13 features per modality |
-| 7 | Feature Engineering | 📋 Todo | Band ratios, normalization, derived features |
-| 8 | Dimensionality Reduction | 📋 Todo | PCA, ICA, Scree plot |
+| 6 | Feature Extraction | ✅ Complete | 2,780 feature rows, 18/20/13 features per modality |
+| 7 | Feature Engineering | ✅ Complete | Band ratios, baseline norm, delta features, aggregated CSVs |
+| 8 | Dimensionality Reduction | ✅ Complete | PCA: EEG 220→38, ECG 172→22, EMG 140→18 (at 95% var) |
 | 9 | Feature Selection | 📋 Todo | Filter/Wrapper/Embedded methods |
 | 10 | Final Validation | 📋 Todo | VIF, separability, class balance |
 
@@ -106,21 +106,36 @@
   - EMG: 13 features/channel (9 temporal + 4 spectral)
   - EEG dominant band: beta (41.7 µV²/Hz), ECG mean RR: 731 ms
 
+### Stage 7: Feature Engineering ✅
+
+- **Completed:** May 20, 2026
+- **Output:** 90 CSV files + 5 figures (`output/stage7_engineering/`)
+- **Key findings:**
+  - EEG: 63 columns (18 orig + 5 ratios + 23 norm + 10 delta + 1 phase)
+  - ECG: 57 columns, EMG: 43 columns
+  - 6 EEG features significant by ANOVA (alpha_beta_ratio F=23.16 highest)
+  - EEG redundancy: 7 pairs |r|≥0.95; EMG: 2 pairs; ECG: 0
+
+### Stage 8: Dimensionality Reduction ✅
+
+- **Completed:** May 21, 2026
+- **Output:** 6 CSV files + 12 figures + 4 JSON (`output/stage8_dimreduction/`)
+- **Key findings:**
+  - EEG: 375 obs, 220 features → 38 PCs (95% var, 83% compression)
+  - ECG: 41 obs, 172 features → 22 PCs (28 cols dropped: lf/hf NaN)
+  - EMG: 37 obs, 140 features → 18 PCs
+  - EEG PC1 (18.7%) captures delta² spectral power dynamics
+
 ---
 
 ## Next Steps
 
-### Immediate (Stage 7)
-1. Implement Stage 7: Feature Engineering
-2. Input: `output/stage6_features/data/s*_{eeg,ecg,emg}_features.csv`
+### Immediate (Stage 9: Feature Selection)
 
-### Stage 7 Requirements
-- Band power ratios (alpha/beta, theta/alpha, etc.)
-- Normalize features by baseline window
-- Generate delta features (Δ, Δ²)
-- Temporal aggregations (mean/std/min/max per subject per modality)
-- Feature redundancy analysis
-- Correlation with response variable
+- Input: `output/stage8_dimreduction/data/{mod}_pca_reduced.csv`
+- Filter: ANOVA F-test, Mutual Information
+- Wrapper: RFE with cross-validation
+- Embedded: L1-regularised classifier
 
 ---
 
