@@ -233,6 +233,44 @@ Os segmentos válidos foram armazenados em arquivos \texttt{.npz} (NumPy compres
     \item Metadados: timestamps, durações, limiares utilizados.
 \end{itemize}
 
+\section{Extração de Atributos}
+\label{sec:metodo_extracao}
+
+No sexto estágio do pipeline, descritores quantitativos são extraídos de cada janela temporal gerada no Estágio 5, construindo a matriz de atributos para aprendizado de máquina. A modalidade fNIRS foi definitivamente excluída neste estágio, confirmando o resultado do Estágio 5 em que menos de 2,5\% das janelas foram retidas.
+
+\subsection{Atributos no Domínio do Tempo}
+
+Para todas as modalidades ativas (EEG, ECG e EMG), os seguintes descritores temporais são calculados por canal e por janela:
+
+\begin{itemize}
+    \item \textbf{RMS} (\textit{Root Mean Square}): $\text{RMS} = \sqrt{\frac{1}{N}\sum_{i=1}^{N} x_i^2}$ — amplitude efetiva do sinal.
+    \item \textbf{MAV} (\textit{Mean Absolute Value}): $\text{MAV} = \frac{1}{N}\sum_{i=1}^{N} |x_i|$ — indicador de ativação.
+    \item \textbf{Variância:} $\sigma^2 = \frac{1}{N}\sum_{i=1}^{N}(x_i - \bar{x})^2$.
+    \item \textbf{ZCR} (\textit{Zero Crossing Rate}): taxa de cruzamentos por zero, sensível à frequência dominante.
+    \item \textbf{Parâmetros de Hjorth:} Atividade ($\sigma^2$), Mobilidade ($\sqrt{\sigma^2_{dx}/\sigma^2_x}$) e Complexidade (razão de mobilidades de primeira e segunda derivadas), que caracterizam espalhamento espectral sem transformada de Fourier.
+    \item \textbf{Assimetria e Curtose:} momentos estatísticos de terceira e quarta ordem, respectivamente.
+\end{itemize}
+
+\subsection{Atributos no Domínio da Frequência}
+
+A estimativa da Densidade Espectral de Potência (DEP) é realizada pelo método de Welch, com janela de Hann e \textit{nperseg} = $\min(256, N)$ amostras. Os atributos extraídos são:
+
+\begin{itemize}
+    \item \textbf{Potência Total:} integral da DEP pela regra trapezoidal.
+    \item \textbf{Frequência Média e Mediana:} média ponderada pela potência e frequência onde a potência acumulada atinge 50\%.
+    \item \textbf{Entropia Espectral:} $H = -\sum p_i \log_2 p_i$, onde $p_i$ é a DEP normalizada.
+    \item \textbf{Potência por Bandas (EEG):} delta (0,5--4 Hz), theta (4--8 Hz), alpha (8--13 Hz), beta (13--30 Hz) e gamma (30--50 Hz).
+\end{itemize}
+
+\subsection{Atributos de Variabilidade Cardíaca (ECG)}
+
+Para o ECG, atributos adicionais de Variabilidade da Frequência Cardíaca (VFC) são extraídos a partir da detecção de picos R por \textit{threshold} adaptativo com \texttt{scipy.signal.find\_peaks}:
+
+\begin{itemize}
+    \item \textbf{Domínio do tempo (HRV):} $\overline{RR}$, SDNN (desvio padrão dos intervalos RR), RMSSD (raiz quadrada da média dos quadrados das diferenças sucessivas) e pNN50 (proporção de diferenças sucessivas maiores que 50 ms).
+    \item \textbf{Domínio da frequência (HRV):} potência nas bandas LF (0,04--0,15 Hz) e HF (0,15--0,40 Hz), e razão LF/HF, estimadas sobre o tacograma RR reamostrado a 4 Hz.
+\end{itemize}
+
 \section{Estrutura do Pipeline de Processamento}
 
 O pipeline projetado compreende dez estágios sequenciais. O estágio inicial corresponde à aquisição e validação de dados brutos. O segundo estágio contempla o cálculo de índices de qualidade (SQI) para a rejeição de segmentos. O terceiro estágio executa análises estatísticas e testes de hipótese. O quarto estágio aplica técnicas de filtragem e correção de artefatos. O quinto estágio realiza a segmentação temporal dos sinais em janelas. O sexto estágio executa a extração de atributos nos domínios do tempo e da frequência. O sétimo estágio realiza a engenharia de novos atributos. O oitavo estágio aplica redução de dimensionalidade por componentes principais. O nono estágio executa a seleção de variáveis informativas. O décimo estágio valida estatisticamente o conjunto final. Este relatório concentra-se na execução dos cinco primeiros estágios do projeto.
