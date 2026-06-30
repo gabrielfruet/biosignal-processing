@@ -383,30 +383,56 @@ A análise da variabilidade entre os 16 sujeitos revelou padrões distintos por 
     \caption{Retenção de janelas por sujeito e modalidade}
     \label{tab:subjects_segmentacao}
     \resizebox{\textwidth}{!}{
-        \begin{tabular}{lcccccccc}
+        \begin{tabular}{
+            l
+            S[table-format=2.0]
+            S[table-format=2.0, table-space-text-post={\ (100\%)}]
+            @{\hspace{4ex}}
+            S[table-format=2.0]
+            S[table-format=2.0, table-space-text-post={\ (100\%)}]
+            @{\hspace{4ex}}
+            S[table-format=2.0]
+            S[table-format=2.0, table-space-text-post={\ (100\%)}]
+            @{\hspace{4ex}}
+            S[table-format=2.0]
+            S[table-format=2.0, table-space-text-post={\ (100\%)}]
+        }
             \toprule
-            \textbf{Sujeito} & \textbf{EEG Total} & \textbf{EEG Válidas} & \textbf{ECG Total} & \textbf{ECG Válidas} & \textbf{EMG Total} & \textbf{EMG Válidas} & \textbf{fNIRS Total} & \textbf{fNIRS Válidas} \\
+            \textbf{Sujeito}
+                & \multicolumn{2}{c}{\textbf{EEG}}
+                & \multicolumn{2}{c}{\textbf{ECG}}
+                & \multicolumn{2}{c}{\textbf{EMG}}
+                & \multicolumn{2}{c}{\textbf{fNIRS}} \\
+            \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+            & {\textbf{Total}} & {\textbf{Válidas}}
+            & {\textbf{Total}} & {\textbf{Válidas}}
+            & {\textbf{Total}} & {\textbf{Válidas}}
+            & {\textbf{Total}} & {\textbf{Válidas}} \\
             \midrule
-            s000 & 28 & 23 (82\%) & 51 & 16 (31\%) & 51 & 24 (47\%) & 28 & 4 (14\%) \\
-            s001 & 23 & 22 (96\%) & 20 & 17 (85\%) & 20 & 7 (35\%) & 23 & 2 (9\%) \\
-            s002 & 15 & 14 (93\%) & 15 & 14 (93\%) & 15 & 0 (0\%) & 15 & 0 (0\%) \\
-            s003 & 16 & 15 (94\%) & 16 & 2 (12\%) & 16 & 13 (81\%) & 16 & 0 (0\%) \\
-            s004 & 20 & 19 (95\%) & 16 & 4 (25\%) & 16 & 10 (62\%) & 20 & 0 (0\%) \\
-            s005 & 21 & 20 (95\%) & 18 & 17 (94\%) & 18 & 17 (94\%) & 21 & 0 (0\%) \\
-            s006 & 20 & 19 (95\%) & 19 & 2 (11\%) & 19 & 8 (42\%) & 20 & 1 (5\%) \\
-            s007 & 16 & 15 (94\%) & 17 & 9 (53\%) & 17 & 2 (12\%) & 16 & 0 (0\%) \\
-            s008 & 19 & 18 (95\%) & 20 & 19 (95\%) & 20 & 8 (40\%) & 19 & 0 (0\%) \\
-            s009 & 20 & 19 (95\%) & 20 & 19 (95\%) & 20 & 3 (15\%) & 20 & 0 (0\%) \\
-            s010 & 14 & 13 (93\%) & 15 & 14 (93\%) & 15 & 4 (27\%) & 14 & 0 (0\%) \\
-            s011 & 24 & 23 (96\%) & 24 & 23 (96\%) & 24 & 21 (88\%) & 24 & 0 (0\%) \\
-            s012 & 23 & 22 (96\%) & 24 & 23 (96\%) & 24 & 10 (42\%) & 23 & 1 (4\%) \\
-            s013 & 26 & 25 (96\%) & 20 & 0 (0\%) & 20 & 10 (50\%) & 26 & 0 (0\%) \\
-            s014 & 25 & 24 (96\%) & 23 & 22 (96\%) & 23 & 10 (43\%) & 25 & 0 (0\%) \\
-            s015 & 19 & 18 (95\%) & 16 & 15 (94\%) & 16 & 0 (0\%) & 4 & 0 (0\%) \\
+            s000 & 28 & 23 { (82\%)} & 51 & 16 { (31\%)} & 51 & 24 { (47\%)} & 28 & 4 { (14\%)} \\
+            s001 & 23 & 22 { (96\%)} & 20 & 17 { (85\%)} & 20 &  7 { (35\%)} & 23 & 2 { (9\%)}  \\
+            s002 & 15 & 14 { (93\%)} & 15 & 14 { (93\%)} & 15 &  0 { (0\%)}  & 15 & 0 { (0\%)}  \\
+            s003 & 16 & 15 { (94\%)} & 16 &  2 { (12\%)} & 16 & 13 { (81\%)} & 16 & 0 { (0\%)}  \\
+            s004 & 20 & 19 { (95\%)} & 16 &  4 { (25\%)} & 16 & 10 { (62\%)} & 20 & 0 { (0\%)}  \\
+            s005 & 21 & 20 { (95\%)} & 18 & 17 { (94\%)} & 18 & 17 { (94\%)} & 21 & 0 { (0\%)}  \\
+            s006 & 20 & 19 { (95\%)} & 19 &  2 { (11\%)} & 19 &  8 { (42\%)} & 20 & 1 { (5\%)}  \\
+            s007 & 16 & 15 { (94\%)} & 17 &  9 { (53\%)} & 17 &  2 { (12\%)} & 16 & 0 { (0\%)}  \\
+            s008 & 19 & 18 { (95\%)} & 20 & 19 { (95\%)} & 20 &  8 { (40\%)} & 19 & 0 { (0\%)}  \\
+            s009 & 20 & 19 { (95\%)} & 20 & 19 { (95\%)} & 20 &  3 { (15\%)} & 20 & 0 { (0\%)}  \\
+            s010 & 14 & 13 { (93\%)} & 15 & 14 { (93\%)} & 15 &  4 { (27\%)} & 14 & 0 { (0\%)}  \\
+            s011 & 24 & 23 { (96\%)} & 24 & 23 { (96\%)} & 24 & 21 { (88\%)} & 24 & 0 { (0\%)}  \\
+            s012 & 23 & 22 { (96\%)} & 24 & 23 { (96\%)} & 24 & 10 { (42\%)} & 23 & 1 { (4\%)}  \\
+            s013 & 26 & 25 { (96\%)} & 20 &  0 { (0\%)}  & 20 & 10 { (50\%)} & 26 & 0 { (0\%)}  \\
+            s014 & 25 & 24 { (96\%)} & 23 & 22 { (96\%)} & 23 & 10 { (43\%)} & 25 & 0 { (0\%)}  \\
+            s015 & 19 & 18 { (95\%)} & 16 & 15 { (94\%)} & 16 &  0 { (0\%)}  &  4 & 0 { (0\%)}  \\
             \bottomrule
         \end{tabular}
     }
 \end{table}
+
+A análise por sujeito revela padrões de qualidade heterogêneos entre participantes. O sujeito \textbf{s005} apresentou o melhor perfil global (EEG 95\%, ECG 94\%, EMG 94\%), enquanto \textbf{s011} foi o único a superar 88\% em todas as três modalidades ativas. Em contraste, \textbf{s000} registrou as maiores perdas multimodais simultâneas: EEG 82\% (menor entre todos), ECG 31\% e EMG 47\%, sugerindo problemas de fixação do equipamento durante o protocolo.
+
+No ECG, três sujeitos apresentaram rejeição quase total: \textbf{s003} (88\% rejeitado), \textbf{s006} (89\%) e, criticamente, \textbf{s013} (100\% rejeitado), que foi excluído do dataset cruzado final por ausência de janelas ECG válidas. Esses casos indicam provável desconexão do eletrodo ou interferência de movimento de alta amplitude. No EMG, os sujeitos \textbf{s002} e \textbf{s015} tiveram 100\% de rejeição — falhas completas de aquisição que os excluem igualmente do dataset cruzado. Os sujeitos \textbf{s007} (88\% rejeitado) e \textbf{s009} (85\% rejeitado) apresentaram EMG com baixíssima retenção, consistente com a ausência de tarefa motora explícita no protocolo. Para o fNIRS, todos os 16 sujeitos tiveram retenção inferior a 15\%, confirmando a exclusão definitiva desta modalidade.
 
 
 \begin{enumerate}
@@ -495,7 +521,7 @@ A Figura \ref{fig:feature_corr_eeg} exibe o mapa de calor das correlações de P
 
 \subsection{Potência por Bandas de EEG}
 
-A Figura \ref{fig:eeg_bands} apresenta as potências médias por banda de frequência para cada sujeito. A banda beta (13--30 Hz) dominou com potência média de 41,7 $\mu V^2$/Hz, seguida pela banda alpha (8--13 Hz) com 19,0 $\mu V^2$/Hz. Esta distribuição é consistente com a literatura de EEG emocional, onde a banda beta é associada ao processamento cognitivo e à resposta ao estímulo visual.
+A Figura \ref{fig:eeg_bands} apresenta as potências médias por banda de frequência para cada sujeito. A banda beta (13--30 Hz) dominou com potência média de 41,7 $\mu V^2$/Hz, seguida pela banda alpha (8--13 Hz) com 19,0 $\mu V^2$/Hz. Esta distribuição é consistente com a literatura de EEG emocional, onde a banda beta é associada ao processamento cognitivo e à resposta ao estímulo visual. Destaca-se que o sujeito s000 apresenta potência na banda delta aproximadamente 80 vezes superior à mediana dos demais sujeitos, indicando a presença de artefatos de baixa frequência persistentes neste participante — artefato já identificado no Estágio 1 como canal com alto nível de ruído.
 
 \begin{figure}[htbp]
     \centering
@@ -543,7 +569,7 @@ A Figura \ref{fig:band_ratios} apresenta a distribuição das razões de potênc
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{../output/stage7_engineering/figures/band_ratios_eeg.png}
-    \caption{Razões de potência de banda EEG (alpha/beta, theta/alpha, índice de engajamento, delta/beta, theta/beta) por fase experimental: linha de base, estimulação e recuperação.}
+    \caption{Razões de potência de banda EEG por fase experimental.}
     \label{fig:band_ratios}
 \end{figure}
 
@@ -554,7 +580,7 @@ A Figura \ref{fig:discriminability} apresenta as $F$-estatísticas ANOVA para os
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{../output/stage7_engineering/figures/phase_discriminability.png}
-    \caption{Discriminabilidade de fase (ANOVA $F$-estatística) por atributo e modalidade. Barras vermelhas indicam significância estatística ($p < 0{,}05$).}
+    \caption{Discriminabilidade de fase (ANOVA $F$-estatística) por atributo e modalidade.}
     \label{fig:discriminability}
 \end{figure}
 
@@ -565,7 +591,7 @@ A análise de correlação de Pearson identificou 7 pares redundantes no EEG ($|
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\textwidth]{../output/stage7_engineering/figures/feature_redundancy_eeg.png}
-    \caption{Mapa de calor de redundância (correlação de Pearson) entre atributos de EEG. Pares com $|r| \geq 0{,}95$ são considerados redundantes.}
+    \caption{Mapa de calor de redundância entre atributos de EEG (correlação de Pearson).}
     \label{fig:redundancy_eeg}
 \end{figure}
 
@@ -578,9 +604,9 @@ O oitavo estágio aplicou PCA sobre as matrizes agregadas do Estágio 7, conform
     \centering
     \caption{Resultados da PCA por modalidade}
     \label{tab:pca_summary}
-    \begin{tabular}{lrrrrrrr}
+    \begin{tabular}{cccccccc}
         \toprule
-        \textbf{Modalidade} & \textbf{Obs.} & \textbf{Atrib. entrada} & \textbf{Descartados} & \textbf{PC@90\%} & \textbf{PC@95\%} & \textbf{Var. PC1} & \textbf{Var. PC2} \\
+        \textbf{Modalidade} & \textbf{Obs.} & \makecell[c]{\textbf{Atrib.} \\ \textbf{entrada}} & \textbf{Descartados} & \textbf{PC@90\%} & \textbf{PC@95\%} & \makecell[c]{\textbf{Var.} \\ \textbf{PC1}} & \makecell[c]{\textbf{Var.} \\ \textbf{PC2}} \\
         \midrule
         EEG & 375 & 220 & 4  & 26 & 38 & 18{,}7\% & 15{,}7\% \\
         ECG & 41  & 172 & 28 & 18 & 22 & 17{,}9\% & 11{,}3\% \\
@@ -593,26 +619,26 @@ O oitavo estágio aplicou PCA sobre as matrizes agregadas do Estágio 7, conform
 
 Para o EEG, 375 observações (sujeito $\times$ canal $\times$ fase) foram decompostas a partir de 220 atributos (4 colunas \textit{zcr\_norm} descartadas por excesso de NaN). O primeiro componente explica 18{,}7\% da variância total e o segundo 15{,}7\%; os cinco primeiros componentes acumulam 54{,}0\% e os dez primeiros 71{,}1\%. São necessários 26 componentes para atingir 90\% e 38 para 95\% de variância explicada, representando uma compressão de 83\% (220 → 38 dimensões).
 
-A análise das cargas do PC1 revela que os atributos de maior peso são derivados de segunda ordem dos poderes espectrais (\textit{delta2\_alpha\_power\_std}, \textit{delta2\_alpha\_power\_max}, \textit{delta2\_beta\_power\_std}), indicando que a principal fonte de variância entre observações é a instabilidade temporal dos poderes nas bandas alfa e beta. O PC2 é dominado pelos agregados normalizados de máximo (\textit{total\_power\_norm\_max}, \textit{theta\_power\_norm\_max}), capturando contrastes de amplitude entre sujeitos.
+A análise das cargas do PC1 revela que os atributos de maior peso são derivados de segunda ordem dos poderes espectrais (\textit{delta2\_alpha\_power\_std}, \textit{delta2\_alpha\_power\_max}, \textit{delta2\_beta\_power\_std}), indicando que a principal fonte de variância entre observações é a instabilidade temporal dos poderes nas bandas alfa e beta. O PC2 é dominado pelos agregados normalizados de máximo (\textit{total\_power\_norm\_max}, \textit{theta\_power\_norm\_max}), capturando contrastes de amplitude entre sujeitos. A projeção das observações no plano PC1~$\times$~PC2 (Figura~\ref{fig:pca_scatter_eeg}) revela sobreposição parcial entre as três fases, consistente com os resultados de discriminabilidade do Estágio~7 e com a natureza distribuída da informação de fase no espaço PCA.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{../output/stage8_dimreduction/figures/scree_plot_eeg.png}
-    \caption{Diagrama de cotovelo (EEG): variância explicada por componente principal. As linhas tracejadas indicam os limiares de 90\% e 95\% de variância acumulada.}
+    \caption{Diagrama de cotovelo para o EEG.}
     \label{fig:scree_eeg}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{../output/stage8_dimreduction/figures/cumulative_variance_eeg.png}
-    \caption{Curva de variância acumulada (EEG). São necessários 26 e 38 componentes para atingir 90\% e 95\% de variância explicada, respectivamente.}
+    \caption{Curva de variância acumulada para o EEG.}
     \label{fig:cumvar_eeg}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.80\textwidth]{../output/stage8_dimreduction/figures/pca_scatter_eeg.png}
-    \caption{Dispersão PC1 $\times$ PC2 para EEG, colorida por fase experimental (linha de base, estimulação, recuperação). Observa-se sobreposição parcial entre fases, consistente com os resultados de discriminabilidade do Estágio 7.}
+    \caption{Dispersão PC1 $\times$ PC2 para EEG por fase experimental.}
     \label{fig:pca_scatter_eeg}
 \end{figure}
 
@@ -625,6 +651,111 @@ Para o EMG, 37 observações e 140 atributos (4 descartados) resultam em 15 e 18
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{../output/stage8_dimreduction/figures/pca_loadings_eeg.png}
-    \caption{Mapa de cargas PCA para EEG: primeiros 5 componentes versus 15 atributos de maior carga absoluta. Os atributos de variação temporal dos poderes espectrais (prefixo \textit{delta2\_}) dominam o PC1.}
+    \caption{Mapa de cargas PCA para EEG: primeiros 5 componentes e os 15 atributos de maior carga absoluta.}
     \label{fig:pca_loadings_eeg}
 \end{figure}
+
+\section{Seleção de Atributos}
+\label{sec:resultados_selecao}
+
+O nono estágio aplicou três famílias de seleção sobre os componentes principais produzidos pelo Estágio 8, conforme descrito na Seção~\ref{sec:metodo_selecao}. A Tabela~\ref{tab:selection_summary} apresenta os resultados consolidados por modalidade.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Resultados da seleção de atributos por modalidade}
+    \label{tab:selection_summary}
+    \begin{tabular}{ccccccc}
+        \toprule
+        \textbf{Modalidade} & \makecell[c]{\textbf{PCs} \\ \textbf{entrada}} & \makecell[c]{\textbf{Sig.} \\ \textbf{Bonf.}} & \makecell[c]{\textbf{RFE} \\ \textbf{ótimo}} & \makecell[c]{\textbf{L1} \\ \textbf{não-zero}} & \textbf{Consenso} & \textbf{Acc. CV} \\
+        \midrule
+        EEG & 38 & 2  & 36 & 38 & 36 & 65{,}6\% \\
+        ECG & 22 & 0  & 10 & 19 & 10 & 36{,}7\% \\
+        EMG & 18 & 0  & 16 & 15 & 16 & 53{,}9\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{EEG}
+
+Para o EEG, o RFECV determinou que o subconjunto ótimo contém 36 dos 38 componentes, atingindo acurácia de validação cruzada de 65{,}6\% para três classes (chance = 33{,}3\%). Apenas 2 componentes sobreviveram à correção de Bonferroni (PC29, $F = 16{,}53$; PC6, $F = 9{,}05$), refletindo a elevada multiplicidade dos 38 testes simultâneos. O componente de maior destaque é o PC29, que apresenta $f^2 = 0{,}089$ (efeito pequeno a médio) e informação mútua de 0{,}117. O fato de o RFECV reter 36 dos 38 componentes sugere que a informação de fase está distribuída difusamente pelo espaço PCA do EEG, sem concentração em poucos componentes dominantes.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage9_selection/figures/anova_fscores_eeg.png}
+    \caption{$F$-estatísticas ANOVA por componente principal para EEG.}
+    \label{fig:anova_eeg}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage9_selection/figures/rfe_cv_eeg.png}
+    \caption{Curva RFECV para EEG: acurácia de validação cruzada por número de componentes retidos.}
+    \label{fig:rfe_eeg}
+\end{figure}
+
+\subsection{ECG e EMG}
+
+Para o ECG, nenhum componente atingiu significância estatística após correção de Bonferroni, e a acurácia RFECV de 36{,}7\% é essencialmente ao nível do acaso, corroborando os resultados dos Estágios 7 e 8 que indicam ausência de discriminabilidade de fase no sinal cardíaco com janelas de 5 s. O subconjunto consenso retém 10 dos 22 PCs com base no critério RFE.
+
+O EMG apresenta acurácia moderada de 53{,}9\%, com o componente PC15 destacando-se como o mais informativo: $f^2 = 0{,}260$ (equivalente a $\eta^2 = 0{,}207$ pela relação $\eta^2 = f^2/(1+f^2)$; efeito médio, maior valor entre todas as modalidades), consistente com a hipótese de que a atividade muscular periférica reflete em algum grau as fases de estimulação emocional. Nenhum componente de EMG ou ECG sobreviveu à correção de Bonferroni.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../output/stage9_selection/figures/consensus_ranking_eeg.png}
+    \caption{Ranking de consenso para EEG: posição dos 15 melhores componentes nos métodos ANOVA, MI, L1-coeficiente e RFE.}
+    \label{fig:consensus_eeg}
+\end{figure}
+
+\section{Validação Estatística Final}
+\label{sec:resultados_validacao}
+
+O décimo estágio verificou a prontidão do conjunto de dados conforme descrito na Seção~\ref{sec:metodo_validacao}. A Tabela~\ref{tab:validation_summary} apresenta os resultados consolidados por modalidade.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Resultados da validação estatística final por modalidade}
+    \label{tab:validation_summary}
+    \begin{tabular}{lcccccc}
+        \toprule
+        \textbf{Modalidade} & \textbf{Obs.} & \textbf{Atrib.} & \textbf{VIF máx.} & \textbf{Raz. imbalan.} & \textbf{$\eta^2$ (top PC)} & \textbf{Pronto} \\
+        \midrule
+        EEG & 375 & 36 & 1{,}000 & 1{,}00 & 0{,}082 & \checkmark \\
+        ECG & 41  & 10 & 1{,}000 & 1{,}08 & 0{,}163 & \checkmark \\
+        EMG & 37  & 16 & 1{,}000 & 1{,}27 & 0{,}207 & \checkmark \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Multicolinearidade}
+
+O VIF de todos os componentes principais é exatamente $1{,}000$ para as três modalidades, confirmando a ortogonalidade matemática garantida pela PCA. Nenhum componente apresenta redundância linear com os demais, validando a integridade da etapa de redução de dimensionalidade.
+
+\subsection{Separabilidade de Fase}
+
+A Figura~\ref{fig:density_eeg} ilustra as curvas de densidade por fase para os três primeiros componentes do EEG. O componente PC29 apresenta o maior poder discriminante individual ($F = 16{,}53$, $\eta^2 = 0{,}082$), sendo o único componente EEG significativo após correção de Bonferroni. O traço de Pillai multivariado do EEG é de $0{,}516$, indicando separabilidade moderada entre as três fases.
+
+O EMG apresenta o maior $\eta^2$ por componente ($\eta^2 = 0{,}207$ para PC15) e a maior distância de Bhattacharyya entre fases ($d_B = 0{,}376$ entre linha de base e recuperação), sugerindo que a atividade muscular periférica reflete diferenças estruturais entre as condições experimentais. O ECG permanece com separabilidade limitada ($F_{\max} = 3{,}71$, $d_B \leq 0{,}258$), consistente com os resultados dos Estágios 7--9.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{../output/stage10_validation/figures/density_eeg.png}
+    \caption{Curvas de densidade KDE por fase experimental para os três componentes EEG mais discriminativos (PC29, PC13, PC6).}
+    \label{fig:density_eeg}
+\end{figure}
+
+\subsection{Balanceamento de Classes}
+
+O EEG apresenta balanceamento perfeito entre fases (125 observações cada, razão $= 1{,}00$). O ECG possui razão de $1{,}08$ e o EMG de $1{,}27$, ambos dentro do limiar de $1{,}5$ adotado. Nenhuma modalidade requer reamostragem para equilibrar classes.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../output/stage10_validation/figures/class_balance_eeg.png}
+    \caption{Balanceamento de classes por fase experimental para o EEG.}
+    \label{fig:balance_eeg}
+\end{figure}
+
+\subsection{Dataset Final}
+
+O dataset cruzado entre modalidades foi construído pela junção interna nas chaves \texttt{subject\_id} e \texttt{phase}, resultando em 13 sujeitos comuns às três modalidades, 30 observações e 62 atributos ($36_{\text{EEG}} + 10_{\text{ECG}} + 16_{\text{EMG}}$). Os 3 sujeitos excluídos da junção correspondem àqueles sem dados de ECG (s013) ou EMG (s002, s015) desde o Estágio 5. O conjunto EEG isolado (375 observações, 36 atributos) permanece disponível para experimentos de classificação unimodal.
+
+O pipeline de 10 estágios está completo. O dataset final está disponível em \texttt{output/stage10\_validation/data/dataset\_final.csv}, pronto para aplicação de classificadores como SVM, $k$-NN, \textit{Random Forest} e redes neurais.

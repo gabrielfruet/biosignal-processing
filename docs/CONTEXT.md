@@ -40,8 +40,8 @@
 | 6 | Feature Extraction | ✅ Complete | 2,780 feature rows, 18/20/13 features per modality |
 | 7 | Feature Engineering | ✅ Complete | Band ratios, baseline norm, delta features, aggregated CSVs |
 | 8 | Dimensionality Reduction | ✅ Complete | PCA: EEG 220→38, ECG 172→22, EMG 140→18 (at 95% var) |
-| 9 | Feature Selection | 📋 Todo | Filter/Wrapper/Embedded methods |
-| 10 | Final Validation | 📋 Todo | VIF, separability, class balance |
+| 9 | Feature Selection | ✅ Complete | ANOVA/MI/RFECV/L1: EEG 36 PCs (65.6% CV), ECG 10, EMG 16 |
+| 10 | Final Validation | ✅ Complete | VIF=1.0, all balanced, dataset_final.csv (13 subj, 62 feat) |
 
 ---
 
@@ -126,16 +126,37 @@
   - EMG: 37 obs, 140 features → 18 PCs
   - EEG PC1 (18.7%) captures delta² spectral power dynamics
 
+### Stage 9: Feature Selection ✅
+
+- **Completed:** May 22, 2026
+- **Output:** 3 selected CSVs + 12 figures + 4 JSONs (`output/stage9_selection/`)
+- **Key findings:**
+  - EEG: 36/38 PCs selected, RFECV CV accuracy 65.6% (vs 33% chance)
+  - ECG: 10/22 PCs selected, CV accuracy 36.7% (near chance)
+  - EMG: 16/18 PCs selected, CV accuracy 53.9%
+  - EEG top PC: PC29 (F=16.53, Bonferroni significant, Cohen's f²=0.09)
+
+### Stage 10: Final Validation ✅
+
+- **Completed:** May 22, 2026
+- **Output:** 1 final CSV + 9 figures + 4 JSONs (`output/stage10_validation/`)
+- **Key findings:**
+  - VIF = 1.000 for all modalities (PCA orthogonality confirmed)
+  - All modalities balanced (ratio ≤ 1.27, all ≤ 1.5 threshold)
+  - EEG Pillai trace = 0.516; EMG PC15 η²=0.207 (highest single-feature effect)
+  - `dataset_final.csv`: 13 subjects × 30 obs × 62 features (inner join)
+
 ---
+
+## Pipeline Status: ✅ COMPLETE (all 10 stages)
 
 ## Next Steps
 
-### Immediate (Stage 9: Feature Selection)
+### ML Classification (beyond pipeline scope)
 
-- Input: `output/stage8_dimreduction/data/{mod}_pca_reduced.csv`
-- Filter: ANOVA F-test, Mutual Information
-- Wrapper: RFE with cross-validation
-- Embedded: L1-regularised classifier
+- Use `output/stage10_validation/data/dataset_final.csv` for multi-modal classifiers
+- Use `output/stage9_selection/data/eeg_selected.csv` for EEG-only experiments (375 obs)
+- Recommended: Leave-One-Subject-Out CV with SVM, Random Forest, k-NN
 
 ---
 

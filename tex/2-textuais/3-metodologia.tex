@@ -318,6 +318,43 @@ Para cada combinação (sujeito, canal, fase), calculam-se média, desvio padrã
 
 A redundância é avaliada pelo coeficiente de correlação de Pearson entre pares de atributos: pares com $|r| \geq 0{,}95$ são sinalizados como altamente redundantes. A discriminabilidade entre fases é estimada pelo teste ANOVA unidirecional ($F$-estatística) aplicado a cada atributo, identificando quais descritores melhor separam as três condições experimentais.
 
+\section{Seleção de Atributos}
+\label{sec:metodo_selecao}
+
+O nono estágio aplica três famílias complementares de seleção de atributos sobre os componentes principais produzidos pelo Estágio 8, com o objetivo de identificar as representações mais informativas para discriminar as fases experimentais (linha de base, estimulação e recuperação).
+
+\subsection{Métodos de Filtro}
+
+Os métodos de filtro avaliam cada componente independentemente da função de classificação, com base em estatísticas de associação com a variável de resposta (fase experimental):
+
+\begin{itemize}
+    \item \textbf{ANOVA unidirecional} (\textit{f\_classif}): computa a $F$-estatística para cada componente principal, testando a hipótese nula de que as médias são iguais nas três fases. O efeito é quantificado pelo coeficiente $f^2$ de Cohen:
+    \begin{equation}
+        f^2 = \frac{F \cdot (k-1)}{n - k}
+        \label{eq:cohens_f2}
+    \end{equation}
+    onde $k = 3$ fases e $n$ é o número de observações.
+    \item \textbf{Correção de Bonferroni} (SEL-005): os $p$-valores são multiplicados pelo número de testes simultâneos ($p_{\text{corr}} = \min(p \cdot m, 1)$) para controlar o erro tipo I familiar.
+    \item \textbf{Informação Mútua} (\textit{mutual\_info\_classif}): estima a dependência não linear entre cada componente e a fase, complementando a $F$-estatística para relações não-lineares.
+\end{itemize}
+
+\subsection{Método Envoltório — RFECV}
+
+O método envoltório implementa Eliminação Recursiva de Atributos com Validação Cruzada (\textit{Recursive Feature Elimination with Cross-Validation} --- RFECV) usando um SVC linear como estimador base. O RFECV determina iterativamente o número ótimo de componentes $k^*$ que maximiza a acurácia em validação cruzada estratificada de $K = 5$ partições:
+
+\begin{equation}
+    k^* = \arg\max_{k} \; \overline{\text{acc}}_{\text{CV}}(k)
+    \label{eq:rfecv}
+\end{equation}
+
+\subsection{Método Embutido — SVC-L1}
+
+O método embutido treina um SVC linear com regularização L1 ($C = 0{,}1$), que produz coeficientes esparsos. Componentes com coeficiente máximo absoluto $\max_c |w_{ck}| > 0$ são considerados relevantes para pelo menos uma das três classes.
+
+\subsection{Ranking de Consenso}
+
+Para cada componente, calcula-se a posição no ranking de cada método (ANOVA, MI e L1-coeficiente), e o \textit{rank} de consenso é a média aritmética das três posições. Os $k^*_{\text{RFE}}$ componentes de menor \textit{rank} de consenso compõem o subconjunto final de atributos selecionados.
+
 \section{Redução de Dimensionalidade}
 \label{sec:metodo_reducao}
 
@@ -351,6 +388,40 @@ A PCA é ajustada com $k = \min(n, p)$ componentes. O critério de seleção do 
 \subsection{Visualizações}
 
 Para cada modalidade são gerados quatro gráficos: (i) diagrama de cotovelo (\textit{scree plot}) com as variâncias individuais dos primeiros 20 componentes; (ii) curva de variância acumulada com marcadores nos limiares de 90\% e 95\%; (iii) dispersão PC1 $\times$ PC2 colorida por fase experimental; (iv) mapa de calor das cargas dos primeiros 5 componentes sobre os 15 atributos de maior carga absoluta.
+
+\section{Validação Estatística Final}
+\label{sec:metodo_validacao}
+
+O décimo estágio verifica a prontidão do conjunto de dados para o aprendizado de máquina mediante quatro critérios quantitativos, e consolida os componentes selecionados em um único arquivo cruzado entre modalidades.
+
+\subsection{Verificação de Multicolinearidade (VIF)}
+
+O Fator de Inflação da Variância (\textit{Variance Inflation Factor} --- VIF) mede a redundância linear entre atributos. Para o atributo $j$:
+
+\begin{equation}
+    \text{VIF}_j = \frac{1}{1 - R^2_j}
+    \label{eq:vif}
+\end{equation}
+
+\noindent onde $R^2_j$ é o coeficiente de determinação da regressão de $X_j$ sobre os demais atributos. Como os componentes principais são ortogonais por construção, espera-se VIF $= 1{,}0$ para todos os componentes. Valores acima de 5 são sinalizados como moderados e acima de 10 como severos.
+
+\subsection{Análise de Separabilidade de Fase}
+
+A separabilidade entre as três fases experimentais é avaliada por dois indicadores complementares:
+
+\begin{enumerate}
+    \item \textbf{$\eta^2$ de Cohen} por componente (via ANOVA unidirecional): mede a proporção de variância explicada pela fase como variável de grupo.
+    \item \textbf{Traço de Pillai} (aproximação multivariada): $\text{Pillai} = \text{tr}\left(\mathbf{S}_B \mathbf{S}_T^{-1}\right)$, onde $\mathbf{S}_B$ é a matriz de dispersão intergrupos e $\mathbf{S}_T$ a total.
+    \item \textbf{Distância de Bhattacharyya} (1D, componente mais discriminante): mede a sobreposição entre distribuições de duas fases assumindo normalidade.
+\end{enumerate}
+
+\subsection{Balanceamento de Classes}
+
+A razão de desequilíbrio é definida como $r = n_{\max}/n_{\min}$, onde $n_c$ é o número de observações da fase $c$. O limiar de aceitação adotado é $r \leq 1{,}5$.
+
+\subsection{Montagem do Dataset Final}
+
+O dataset final é construído pela junção interna (\textit{inner join}) dos conjuntos selecionados das três modalidades nas chaves \texttt{subject\_id} e \texttt{phase}, com média dos componentes por canal dentro de cada grupo. O arquivo resultante contém $n_{\text{EEG}} + n_{\text{ECG}} + n_{\text{EMG}}$ atributos nomeados com prefixo de modalidade.
 
 \section{Estrutura do Pipeline de Processamento}
 

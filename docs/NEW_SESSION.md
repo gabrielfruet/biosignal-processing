@@ -39,12 +39,32 @@ uv run python -m biosignal list-stages
 | 6. Feature Extraction | ✅ | May 20, 2026 | `run 6` | `stage6_features/`, 2,780 rows |
 | 7. Feature Engineering | ✅ | May 20, 2026 | `run 7` | `stage7_engineering/`, EEG:63col, ECG:57col, EMG:43col |
 | 8. Dimensionality Reduction | ✅ | May 21, 2026 | `run 8` | `stage8_dimreduction/`, PCA 12 figures |
+| 9. Feature Selection | ✅ | May 22, 2026 | `run 9` | `stage9_selection/`, 3 selected CSVs |
+| 10. Final Validation | ✅ | May 22, 2026 | `run 10` | `stage10_validation/`, dataset_final.csv |
 
 ---
 
-## Current State (May 21, 2026)
+## Current State (May 22, 2026) — PIPELINE COMPLETE ✅
 
-### Stage 8 Completed — PCA Results
+### Stage 10 — Final Validation Results
+
+| Modality | Obs | Features | VIF max | Imbalance | η² top PC | Ready |
+|----------|-----|----------|---------|-----------|-----------|-------|
+| EEG      | 375 | 36       | 1.000   | 1.00      | 0.082     | ✅    |
+| ECG      | 41  | 10       | 1.000   | 1.08      | 0.163     | ✅    |
+| EMG      | 37  | 16       | 1.000   | 1.27      | 0.207     | ✅    |
+
+**Dataset final:** 13 subjects × 30 obs × 62 features (cross-modal inner join)
+**Path:** `output/stage10_validation/data/dataset_final.csv`
+
+**Key findings:**
+
+- VIF = 1.0 exactly for all PCs (PCA orthogonality guarantee)
+- EEG perfectly balanced (125/125/125), ECG/EMG near-balanced (ratio ≤ 1.27)
+- EMG PC15 highest effect size η²=0.207; EEG PC29 Bonferroni-significant (F=16.53)
+- Cross-modal dataset loses 3 subjects (ECG/EMG missing) → 13 of 16 subjects
+
+### Stage 9 — Feature Selection Summary (previous)
 
 | Modality | Obs | Features | PC@90% | PC@95% | PC1 var | PC2 var |
 |----------|-----|----------|--------|--------|---------|---------|

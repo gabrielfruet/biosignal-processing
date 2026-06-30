@@ -57,6 +57,18 @@ STAGE8_METRICS_DIR = STAGE8_DIR / "metrics"
 STAGE8_FIGURES_DIR = STAGE8_DIR / "figures"
 STAGE8_DATA_DIR = STAGE8_DIR / "data"
 
+# Stage 9: Feature Selection
+STAGE9_DIR = OUTPUT_DIR / "stage9_selection"
+STAGE9_METRICS_DIR = STAGE9_DIR / "metrics"
+STAGE9_FIGURES_DIR = STAGE9_DIR / "figures"
+STAGE9_DATA_DIR    = STAGE9_DIR / "data"
+
+# Stage 10: Final Validation
+STAGE10_DIR = OUTPUT_DIR / "stage10_validation"
+STAGE10_METRICS_DIR = STAGE10_DIR / "metrics"
+STAGE10_FIGURES_DIR = STAGE10_DIR / "figures"
+STAGE10_DATA_DIR    = STAGE10_DIR / "data"
+
 # Sampling frequencies (Hz)
 SFREQ = {
     "eeg": 512,
